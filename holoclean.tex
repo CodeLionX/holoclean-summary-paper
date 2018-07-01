@@ -12,11 +12,21 @@
 \SetAlCapHSkip{0pt}
 \IncMargin{-\parindent}
 
+\usepackage{tikz} % For Tikz pictures
+\usetikzlibrary{
+  decorations.pathreplacing,
+  arrows,arrows.meta,
+  positioning,
+  calc,
+  angles
+}
+\usepackage{csquotes} % For easy quates \enquote
+
 
 % configuration of template
 \settopmatter{printacmref=false} % Removes citation information below abstract
 \renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
-
+%\pagestyle{plain}
 
 % Metadata Information
 %\acmJournal{TWEB}
