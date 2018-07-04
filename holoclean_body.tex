@@ -13,10 +13,29 @@
   It consists of two steps: Error detection and data repairing.
   Error detection describes to process of identifying incorrect values in a dataset.
   Subsequently data repairing transforms the erroneous dataset into a new one removing detected errors, so the new dataset adheres to data quality requirements.
-  
-  \textbf{Related Work:}
 
-  now techniques and classification (automation, human-guided, input)
+  \bigskip
+  \textbf{Related Work:}
+  Many researchers have made efforts to automate the task of error detection. \textbf{TBD:}
+  \begin{itemize}
+    \item Most of the approaches try to detect the violation of \glspl{ic}.
+    \item duplicate detection
+    \item outlier detection
+  \end{itemize}
+
+  Data repairing techniques can be classified according to whether and how humans are involved in the repairing process.
+  On the one end there are fully automatic approaches like SCARE that leverage machine learning and intelligent partition algorithms to repair a database without the need of user input~\cite{scare}.
+  On the other end there are data wrangling tools that make extensive use of human knowledge to clean a dirty dataset.
+  For example, Data Wrangler~\cite{data_wrangler}, the successor of Potter's Wheel~\cite{potters_wheel}, provides a visual interface for cleaning a dataset.
+  Based on data statistics it creates visual suggestions for data transformations.
+  The user selects and executes those transformations to create a cleaned dataset instance.
+  The tool can export the transformation sequence, to repeat the process on another dataset.
+  This makes it an appropriate tool for the manual definition of ETL processes.
+  The final version of the tool, Trifacta Wrangler~\cite{trifacta_wrangler}, is developed commercially.
+
+  All those tools~\cite{scare,potters_wheel,data_wrangler,trifacta_wrangler} use quantitative statistics of the dataset itself to repair errors in it.
+  Besides that, state-of-the-art methods also use \glspl{ic}~\cite{ajax,gdr,editing_rules,data_tamer} and external knowledge~\cite{katara}, like dictionaries, knowledge bases or domain expert annotations, as input signals.
+  Figure~\ref{fig:tools} shows those tools aligned on their level of user interaction needed to perform data repairing and the usage of the three different input signals.
 
   \begin{figure}[hbt]
     \centering
@@ -33,40 +52,50 @@
       \newcommand{\fillColor}{black!25}
       \newcommand{\drawColor}{black}
       \newcommand{\circleSize}{0.2}
-
-
+      
+      
       \begin{scope}
-        \draw[black,<->] (-1.25,-0.25) -- (1.25,-0.25) ;
-        \draw[black,<->] (-1.25,-0.25) -- (-1.25,1.25) ;
-
-        \draw[tool] (0,1) ellipse (1.15 and 0.15) node {HoloClean\cite{rekatsinas2017holoclean}};
-
-        \node[tool, align=center] at (-1,-0.11) {Data\\Tamer\cite{data_tamer}};
-        \node[tool, align=center] at (-1,0.11) {Editing\\Rules\cite{editing_rules}};
-        \node[tool, align=center] at (-1,0.5) {Guided\\Data\\Repair\cite{gdr}};
-        \node[tool, align=center] at (-1,0.9) {AJAX\\\cite{ajax}};
-
-        \node[tool, align=center] at (0,0) {KATARA\\\cite{katara}};
-
-        \node[tool, align=center] at (0.76,-0.08) {Potter's\\Wheel\cite{potters_wheel}};
-        \node[tool, align=center] at (0.95,0.06) {Data\\Wrangler\\\cite{data_tamer}};
-        \node[tool, align=center] at (1.15,-0.11) {Trifacta\\Wrangler\\\cite{trifacta_wrangler}};
-
-        \node[tool, align=center] at (1,1.05) {SCARE\\\cite{scare}};
-
-        \node[align=center] at (-1.5,1) {Automatic};
-        \node[align=center] at (-1.5,0) {Human\\Guided};
-
-        \node[align=center] at (-1,-0.4) {Integrity\\Constraints};
-        \node[align=center] at (0,-0.4) {External\\Knowledge};
-        \node[align=center] at (1,-0.4) {Statistics\\about Data};
-
+      \draw[black,<->] (-1.25,-0.25) -- (1.25,-0.25) ;
+      \draw[black,<->] (-1.25,-0.25) -- (-1.25,1.25) ;
+      
+      \draw[tool] (0,1) ellipse (1.15 and 0.15) node {HoloClean\cite{holoclean}};
+      
+      \node[tool, align=center] at (-1,-0.11) {Data\\Tamer\cite{data_tamer}};
+      \node[tool, align=center] at (-1,0.11) {Editing\\Rules\cite{editing_rules}};
+      \node[tool, align=center] at (-1,0.5) {Guided\\Data\\Repair\cite{gdr}};
+      \node[tool, align=center] at (-1,0.9) {AJAX\\\cite{ajax}};
+      
+      \node[tool, align=center] at (0,0) {KATARA\\\cite{katara}};
+      
+      \node[tool, align=center] at (0.76,-0.08) {Potter's\\Wheel\cite{potters_wheel}};
+      \node[tool, align=center] at (0.95,0.06) {Data\\Wrangler\\\cite{data_wrangler}};
+      \node[tool, align=center] at (1.15,-0.11) {Trifacta\\Wrangler\\\cite{trifacta_wrangler}};
+      
+      \node[tool, align=center] at (1,1.05) {SCARE\\\cite{scare}};
+      
+      \node[align=center] at (-1.5,1) {Automatic};
+      \node[align=center] at (-1.5,0) {Human\\Guided};
+      
+      \node[align=center] at (-1,-0.4) {Integrity\\Constraints};
+      \node[align=center] at (0,-0.4) {External\\Knowledge};
+      \node[align=center] at (1,-0.4) {Statistics\\about Data};
+      
       \end{scope}
     \end{tikzpicture}
 
     \caption{Data Repairing Tools in Context}
     \label{fig:tools}
   \end{figure}
+
+  \bigskip
+  Most of the tools limit themselves to only one signal to perform data repairing, ignoring the other information.
+  Each type of signal is associated with a different action on the dataset and has its own downsides.
+  Data repairs that use \glspl{ic} could introduce incorrect repairs, because they are relying on the \textit{minimality} principle and assume that most of the data values are clean.
+  This is not necessarily the case and minimal repairs not always correspond to correct repairs~\cite{holoclean}.
+
+  % plagiarization warning: HoloClean: Holistic Data Repairs with Prob. Inf.
+  Error detection methods were shown to achieve reasonable good results on real-world data sets~\cite{errorDetectionSurvey}.
+  But this is not the case for data repairing techniques~\cite{dataRepairingEvaluation}.
 
   \begin{itemize}
     \item HoloClean, overview

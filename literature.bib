@@ -1,4 +1,4 @@
-@article{rekatsinas2017holoclean,
+@article{holoclean,
   title={Holoclean: Holistic data repairs with probabilistic inference},
   author={Rekatsinas, Theodoros and Chu, Xu and Ilyas, Ihab F and R{\'e}, Christopher},
   journal={Proceedings of the VLDB Endowment},
@@ -11,11 +11,11 @@
 
 % introduction
 @article{Redman:quality_disaster,
-  author        = "Thomas C. Redman",
-  title         = "Data: An unfolding quality disaster",
-  journal       = "Information Management Magazine",
-  month         = aug,
-  year          = "2004",
+  author        = {Thomas C. Redman},
+  title         = {Data: An unfolding quality disaster},
+  journal       = {Information Management Magazine},
+  month         = {aug},
+  year          = {2004},
 }
 @article{cost_of_low_qual,
   author = {Anders Haug and Frederik Zachariassen and Dennis van Liempd},
@@ -25,8 +25,36 @@
   number = {2},
   year = {2011},
   keywords = {data quality, master data management, data quality costs},
-  issn = {2013-0953},	pages = {168--193}	doi = {10.3926/jiem..v4n2.p168-193},
+  issn = {2013-0953},
+  pages = {168--193},
+  doi = {10.3926/jiem..v4n2.p168-193},
   url = {http://www.jiem.org/index.php/jiem/article/view/232}
+}
+@article{errorDetectionSurvey,
+  author = {Abedjan, Ziawasch and Chu, Xu and Deng, Dong and Fernandez, Raul Castro and Ilyas, Ihab F. and Ouzzani, Mourad and Papotti, Paolo and Stonebraker, Michael and Tang, Nan},
+  title = {Detecting Data Errors: Where Are We and What Needs to Be Done?},
+  journal = {Proc. VLDB Endow.},
+  issue_date = {August 2016},
+  volume = {9},
+  number = {12},
+  month = aug,
+  year = {2016},
+  issn = {2150-8097},
+  pages = {993--1004},
+  numpages = {12},
+  url = {http://dx.doi.org/10.14778/2994509.2994518},
+  doi = {10.14778/2994509.2994518},
+  acmid = {2994518},
+  publisher = {VLDB Endowment},
+} 
+@article{dataRepairingEvaluation,
+  title={Effective Data Cleaning with Continuous Evaluation.},
+  author={Ilyas, Ihab F},
+  journal={IEEE Data Eng. Bull.},
+  volume={39},
+  number={2},
+  pages={38--46},
+  year={2016}
 }
 
 % tools
@@ -34,7 +62,6 @@
   author = {Chu, Xu and Morcos, John and Ilyas, Ihab F. and Ouzzani, Mourad and Papotti, Paolo and Tang, Nan and Ye, Yin},
   title = {KATARA: A Data Cleaning System Powered by Knowledge Bases and Crowdsourcing},
   booktitle = {Proceedings of the 2015 ACM SIGMOD International Conference on Management of Data},
-  series = {SIGMOD '15},
   year = {2015},
   isbn = {978-1-4503-2758-9},
   location = {Melbourne, Victoria, Australia},
@@ -71,12 +98,28 @@
   pages={381--390},
   year={2001}
 }
+@inproceedings{data_wrangler,
+  author = {Kandel, Sean and Paepcke, Andreas and Hellerstein, Joseph and Heer, Jeffrey},
+  title = {Wrangler: Interactive Visual Specification of Data Transformation Scripts},
+  booktitle = {Proceedings of the SIGCHI Conference on Human Factors in Computing Systems},
+  year = {2011},
+  isbn = {978-1-4503-0228-9},
+  location = {Vancouver, BC, Canada},
+  pages = {3363--3372},
+  numpages = {10},
+  url = {http://doi.acm.org/10.1145/1978942.1979444},
+  doi = {10.1145/1978942.1979444},
+  acmid = {1979444},
+  publisher = {ACM},
+  address = {New York, NY, USA},
+  keywords = {data analysis, data cleaning, transformation, visualization, wrangler},
+} 
 @techreport{trifacta_wrangler,
-  author="Joe Hellerstein and Karthik Sethuraman",
-  title="Whitepaper: Making Data Wrangling Interactive at Any Scale",
-  institution="Trifacta",
-  year="2017",
-  month="nov"
+  author={Joe Hellerstein and Karthik Sethuraman},
+  title={Whitepaper: Making Data Wrangling Interactive at Any Scale},
+  institution={Trifacta},
+  year={2017},
+  month={nov}
 }
 @inproceedings{scare,
   title={Don't be SCAREd: use SCalable Automatic REpairing with maximal likelihood and bounded changes},
