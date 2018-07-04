@@ -20,13 +20,16 @@
   calc,
   angles
 }
-\usepackage{csquotes} % For easy quates \enquote
+
+\usepackage{csquotes} % For easy quotes \enquote
+\usepackage{glossaries} % For acronyms
+\setacronymstyle{long-short}
 
 
 % configuration of template
 \settopmatter{printacmref=false} % Removes citation information below abstract
 \renewcommand\footnotetextcopyrightpermission[1]{} % removes footnote with conference information in first column
-%\pagestyle{plain}
+\pagestyle{plain} % Removes conference information and everything besides page number from footer/header
 
 % Metadata Information
 %\acmJournal{TWEB}
@@ -56,6 +59,8 @@
 %\received[revised]{March 2009}
 %\received[accepted]{June 2009}
 
+% Acronyms
+\newacronym{ic}{IC}{Integrity Constraint}
 
 % Document starts
 \begin{document}
@@ -90,12 +95,13 @@ Abstract goes here.
 
 
 
-\keywords{HoloClean, DeepDive, data cleansing, data repairing,
+\keywords{HoloClean, DeepDive, data cleaning, data repairing,
 holistic data repairs, probabilistic inference, factor graphs}
 
 
 
 \maketitle
+\thispagestyle{plain}
 
 % The default list of authors is too long for headers.
 \renewcommand{\shortauthors}{S. Schmidl}
