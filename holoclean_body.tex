@@ -40,7 +40,7 @@
   \begin{figure}[hbt]
     \centering
     \begin{tikzpicture}[
-        xscale=4.5, yscale=4.5,>=triangle 60,
+        xscale=4.2, yscale=4.2,>=triangle 60,
         tool/.style={
           circle,
           draw=black,
@@ -49,6 +49,7 @@
           minimum size=25pt
         }
       ]
+      \small
       \newcommand{\fillColor}{black!25}
       \newcommand{\drawColor}{black}
       \newcommand{\circleSize}{0.2}
@@ -61,15 +62,15 @@
       \draw[tool] (0,1) ellipse (1.15 and 0.15) node {HoloClean\cite{holoclean}};
       
       \node[tool, align=center] at (-1,-0.11) {Data\\Tamer\cite{data_tamer}};
-      \node[tool, align=center] at (-1,0.11) {Editing\\Rules\cite{editing_rules}};
-      \node[tool, align=center] at (-1,0.5) {Guided\\Data\\Repair\cite{gdr}};
+      \node[tool, align=center] at (-1,0.14) {Editing\\Rules\cite{editing_rules}};
+      \node[tool, align=center] at (-1,0.53) {Guided\\Data\\Repair\cite{gdr}};
       \node[tool, align=center] at (-1,0.9) {AJAX\\\cite{ajax}};
       
       \node[tool, align=center] at (0,0) {KATARA\\\cite{katara}};
       
-      \node[tool, align=center] at (0.76,-0.08) {Potter's\\Wheel\cite{potters_wheel}};
-      \node[tool, align=center] at (0.95,0.06) {Data\\Wrangler\\\cite{data_wrangler}};
-      \node[tool, align=center] at (1.15,-0.11) {Trifacta\\Wrangler\\\cite{trifacta_wrangler}};
+      \node[tool, align=center] at (0.73,-0.05) {Potter's\\Wheel\cite{potters_wheel}};
+      \node[tool, align=center] at (0.95,0.12) {Data\\Wrangler\\\cite{data_wrangler}};
+      \node[tool, align=center] at (1.15,-0.06) {Trifacta\\Wrangler\\\cite{trifacta_wrangler}};
       
       \node[tool, align=center] at (1,1.05) {SCARE\\\cite{scare}};
       
@@ -92,12 +93,14 @@
   Each type of signal is associated with a different action on the dataset and has its own downsides.
   Data repairs that use \glspl{ic} could introduce incorrect repairs, because they are relying on the \textit{minimality} principle and assume that most of the data values are clean.
   This is not necessarily the case and minimal repairs not always correspond to correct repairs~\cite{holoclean}.
-
-  % plagiarization warning: HoloClean: Holistic Data Repairs with Prob. Inf.
-  Error detection methods were shown to achieve reasonable good results on real-world data sets~\cite{errorDetectionSurvey}.
-  But this is not the case for data repairing techniques~\cite{dataRepairingEvaluation}.
-
+  Repair algorithms relying on external information are dependent on the coverage of the external data source and can therefore perform poorly.
+  Quantitative statistics heavily depend on the available information in the dataset itself.
+  For small datasets and unfortunate situations this can drastically decrease repairing quality.
+  
   \begin{itemize}
+    \item combination of methods --> Holistic approach would be beneficial to use all available information.
+    \item Combining heterogeneous signals is challenging as they could suggest conflicting repairs.
+    \item \citeauthor{holoclean} propose a holistic data repairing approach that includes all aforementioned signals~\cite{holoclean}: HoloClean
     \item HoloClean, overview
     \item HoloClean, what is different? (abgrenzung zu anderen verfahren)
     \item Paper Preview/Overview
