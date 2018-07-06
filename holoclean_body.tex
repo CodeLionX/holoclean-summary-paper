@@ -16,8 +16,9 @@
 
   \bigskip
   \textbf{Related Work:}
-  Many researchers have made efforts to automate the task of error detection. \textbf{TBD:}
+  Many researchers have made efforts to automate the task of error detection.
   \begin{itemize}
+    \item \textbf{TBD:}
     \item Most of the approaches try to detect the violation of \glspl{ic}.
     \item duplicate detection
     \item outlier detection
@@ -97,17 +98,34 @@
   Quantitative statistics heavily depend on the available information in the dataset itself.
   For small datasets and unfortunate situations this can drastically decrease repairing quality.
   
+  \citeauthor{holoclean} therefore propose a holistic data repairing approach that includes all aforementioned signals into one framework: HoloClean~\cite{holoclean}.
+  To tackle the problem that different signals could suggest conflicting repairs they convert all signals into features of a probabilistic model.
+  Based on this combined view on the data and their inconsistencies they can then use statistical learning and probabilistic inference to suggest repairs for the dataset.
+  
   \begin{itemize}
-    \item combination of methods --> Holistic approach would be beneficial to use all available information.
-    \item Combining heterogeneous signals is challenging as they could suggest conflicting repairs.
-    \item \citeauthor{holoclean} propose a holistic data repairing approach that includes all aforementioned signals~\cite{holoclean}: HoloClean
-    \item HoloClean, overview
-    \item HoloClean, what is different? (abgrenzung zu anderen verfahren)
-    \item Paper Preview/Overview
+    \item \textbf{Paper Preview/Overview}
   \end{itemize}
 
 
 \section{Background}\label{sec:background}
+  In the following paragraphs we review the terminology used in the next sections.
+  
+  Users of the HoloClean framework can specify \glspl{ic} in form of denial constraints.
+  They combine different types of integrity definitions.
+  Functional Dependencies as well as conditional functional dependencies can be expressed as denial constraints~\cite{fd_to_dc}.
+  A denial constraint states that all predicates of it cannot be true at the same time, otherwise, there is a consistency conflict.
+  It is notated as $\forall t_i, t_j \in D: \neg(P_1 \wedge \dots \wedge P_K)$.
+  Over all tuples $t \in D$ of a database instance $D$ not all predicates $P_k$ are allowed to be true.
+  $P_k$ are defined as $v_1 \circ v_2$ or $v_1 \circ c$ with $v_1, v_2 \in \{t_i.A, t_j.A\}$, where $A$ denotes an attribute of the dataset $D$.
+  The operator $\circ$ can be one of $\{=,<,>,\neq,\leq,\geq\}$~\cite{chu2013discoveringdc}.
+  In this report we use functional dependencies of the form $A_1 \rightarrow A_2$ to express integrity constraints for readability reasons.
+  
+  \begin{itemize}
+    \item DeepDive
+    \item ddlog rules
+    \item factor graphs
+  \end{itemize}
+  
 
 \section{The HoloClean Framework}\label{sec:framework}
 
