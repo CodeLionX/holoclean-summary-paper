@@ -38,10 +38,10 @@
   Besides that, state-of-the-art methods also use \glspl{ic}~\cite{ajax,gdr,editing_rules,data_tamer} and external knowledge~\cite{katara}, like dictionaries, knowledge bases or domain expert annotations, as input signals.
   Figure~\ref{fig:tools} shows those tools aligned on their level of user interaction needed to perform data repairing and the usage of the three different input signals.
 
-  \begin{figure}[hbt]
+  \begin{figure*}[hbt]
     \centering
     \begin{tikzpicture}[
-        xscale=4.2, yscale=4.2,>=triangle 60,
+        xscale=5, yscale=4.2,>=triangle 60,
         tool/.style={
           circle,
           draw=black,
@@ -60,7 +60,7 @@
       \draw[black,<->] (-1.25,-0.25) -- (1.25,-0.25) ;
       \draw[black,<->] (-1.25,-0.25) -- (-1.25,1.25) ;
       
-      \draw[tool] (0,1) ellipse (1.15 and 0.15) node {HoloClean\cite{holoclean}};
+      \draw[tool] (0,1) ellipse (1.15 and 0.15) node {\holoclean{}\cite{holoclean}};
       
       \node[tool, align=center] at (-1,-0.11) {Data\\Tamer\cite{data_tamer}};
       \node[tool, align=center] at (-1,0.14) {Editing\\Rules\cite{editing_rules}};
@@ -87,10 +87,10 @@
 
     \caption{Data Repairing Tools in Context}
     \label{fig:tools}
-  \end{figure}
+  \end{figure*}
 
   \bigskip
-  Most of the tools limit themselves to only one signal to perform data repairing, ignoring the other information.
+  Most of the tools limit themselves to only one signal to perform data repairing, ignoring other information sources.
   Each type of signal is associated with a different action on the dataset and has its own downsides.
   Data repairs that use \glspl{ic} could introduce incorrect repairs, because they are relying on the \textit{minimality} principle and assume that most of the data values are clean.
   This is not necessarily the case and minimal repairs not always correspond to correct repairs~\cite{holoclean}.
@@ -98,7 +98,7 @@
   Quantitative statistics heavily depend on the available information in the dataset itself.
   For small datasets and unfortunate situations this can drastically decrease repairing quality.
   
-  \citeauthor{holoclean} therefore propose a holistic data repairing approach that includes all aforementioned signals into one framework: HoloClean~\cite{holoclean}.
+  \citeauthor{holoclean} therefore propose a holistic data repairing approach that includes all aforementioned signals into one framework: \holoclean{}~\cite{holoclean}.
   To tackle the problem that different signals could suggest conflicting repairs they convert all signals into features of a probabilistic model.
   Based on this combined view on the data and their inconsistencies they can then use statistical learning and probabilistic inference to suggest repairs for the dataset.
   
@@ -110,7 +110,8 @@
 \section{Background}\label{sec:background}
   In the following paragraphs we review the terminology used in the next sections.
   
-  Users of the HoloClean framework can specify \glspl{ic} in form of denial constraints.
+  \subsection{Integrity Constraints}
+  Users of the \holoclean{} framework can specify \glspl{ic} in form of denial constraints.
   They combine different types of integrity definitions.
   Functional Dependencies as well as conditional functional dependencies can be expressed as denial constraints~\cite{fd_to_dc}.
   A denial constraint states that all predicates of it cannot be true at the same time, otherwise, there is a consistency conflict.
@@ -118,17 +119,32 @@
   Over all tuples $t \in D$ of a database instance $D$ not all predicates $P_k$ are allowed to be true.
   $P_k$ are defined as $v_1 \circ v_2$ or $v_1 \circ c$ with $v_1, v_2 \in \{t_i.A, t_j.A\}$, where $A$ denotes an attribute of the dataset $D$.
   The operator $\circ$ can be one of $\{=,<,>,\neq,\leq,\geq\}$~\cite{chu2013discoveringdc}.
-  In this report we use functional dependencies of the form $A_1 \rightarrow A_2$ to express integrity constraints for readability reasons.
+  In this report we use functional dependencies of the form $t_i.A_1 \rightarrow t_j.A_2$ to express integrity constraints for readability reasons.
+  They can easily converted to denial constraints~\cite{fd_to_dc}.
   
-  \begin{itemize}
-    \item DeepDive
-    \item ddlog rules
-    \item factor graphs
-  \end{itemize}
+  \subsection{\deepdive{} and Factor Graphs}
+  \holoclean{} relies on \deepdive{} to perform statistical learning and inference.
+  It is a data management system developed at Stanford University, which allows scalable statistical inference on big unclean datasets~\cite{deepdive}.
+  \holoclean{} uses \deepdive{} to create a factor graph over all input signals and data cells.
+  The factor graph can be defined via a declarative language, called \ddlog{}.
+  A collection of inference rules in DeepDive corresponds to a probabilistic model.
+  Such inference rules are defined over a relation of random variables with weight annotations.
+  We consider the following \ddlog{} rule as a template for the inference rules generated by the \holoclean{} framework:
+  \begin{multline}
+    Value?(t,a,d):-\\Relation(t,a,d), [\text{conditions}], weight=\text{w}
+  \end{multline}
+  $Value?(t,a,d)$ is the head of the rule and defines a random variable identified by $t$, $a$ and $d$.
+  \holoclean{} uses $t$ to identify a tuple and $a$ to identify an attribute.
+  $d$ corresponds to the value of cell $t.a$.
+  The body of the rule consists of three parts:
+  A number of other relations over the used variables (here only one: $Relation(t,a,d)$),
+  conditions using the same operators like denial constraints enclosed in brackets and
+  a weight annotation ($weight=\text{w}$).
+  Grounding of those rules will generate the nodes and factors of the factor graph in \deepdive{}.
   
 
-\section{The HoloClean Framework}\label{sec:framework}
+\section{The \holoclean{} Framework}\label{sec:framework}
 
-\section{Performance of HoloClean}\label{sec:performance}
+\section{Performance of \holoclean{}}\label{sec:performance}
 
 \section{Conclusion}\label{sec:conclusion}
