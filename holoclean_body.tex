@@ -40,51 +40,7 @@
 
   \begin{figure*}[hbt]
     \centering
-    \begin{tikzpicture}[
-        xscale=5, yscale=4.2,>=triangle 60,
-        tool/.style={
-          circle,
-          draw=black,
-          fill=black!30,
-          inner sep=0pt,
-          minimum size=25pt
-        }
-      ]
-      \small
-      \newcommand{\fillColor}{black!25}
-      \newcommand{\drawColor}{black}
-      \newcommand{\circleSize}{0.2}
-      
-      
-      \begin{scope}
-      \draw[black,<->] (-1.25,-0.25) -- (1.25,-0.25) ;
-      \draw[black,<->] (-1.25,-0.25) -- (-1.25,1.25) ;
-      
-      \draw[tool] (0,1) ellipse (1.15 and 0.15) node {\holoclean{}\cite{holoclean}};
-      
-      \node[tool, align=center] at (-1,-0.11) {Data\\Tamer\cite{data_tamer}};
-      \node[tool, align=center] at (-1,0.14) {Editing\\Rules\cite{editing_rules}};
-      \node[tool, align=center] at (-1,0.53) {Guided\\Data\\Repair\cite{gdr}};
-      \node[tool, align=center] at (-1,0.9) {AJAX\\\cite{ajax}};
-      
-      \node[tool, align=center] at (0,0) {KATARA\\\cite{katara}};
-      
-      \node[tool, align=center] at (0.73,-0.05) {Potter's\\Wheel\cite{potters_wheel}};
-      \node[tool, align=center] at (0.95,0.12) {Data\\Wrangler\\\cite{data_wrangler}};
-      \node[tool, align=center] at (1.15,-0.06) {Trifacta\\Wrangler\\\cite{trifacta_wrangler}};
-      
-      \node[tool, align=center] at (1,1.05) {SCARE\\\cite{scare}};
-      
-      \node[align=center] at (-1.5,1) {Automatic};
-      \node[align=center] at (-1.5,0) {Human\\Guided};
-      
-      \node[align=center] at (-1,-0.4) {Integrity\\Constraints};
-      \node[align=center] at (0,-0.4) {External\\Knowledge};
-      \node[align=center] at (1,-0.4) {Statistics\\about Data};
-      
-      \end{scope}
-    \end{tikzpicture}
-
+    \input{tikz/tools}
     \caption{Data Repairing Tools in Context}
     \label{fig:tools}
   \end{figure*}
@@ -144,6 +100,23 @@
   
 
 \section{The \holoclean{} Framework}\label{sec:framework}
+  
+  \subsection{Architecture Overview}
+  In Figure~\ref{fig:architecture} ...
+  
+  \begin{figure}[hbt]
+    \centering
+    \input{tikz/architecture}
+    \caption{\holoclean{} architecture overview}
+    \label{fig:architecture}
+  \end{figure}
+    
+  
+  \subsection{Error Detection}
+
+  \subsection{Generation of the probabilistic model}
+  
+  \subsection{Data Repairing}
 
 \section{Performance of \holoclean{}}\label{sec:performance}
 
