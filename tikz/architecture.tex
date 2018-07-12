@@ -42,7 +42,7 @@
       ($(dataset.west)+(\x1*.5,-1.5)$) node (text) {\textbf{HoloClean}};
   \node[module, below=\vSep*.5 of text] (module1) {1. Error Detection};
   \node[module, below=\vSep of module1] (module2) {2. Probabilistic\\Model Generation};
-  \node[module, below=\vSep of module2] (module3) {3. Inference + Repairing};
+  \node[module, below=\vSep of module2] (module3) {3. Data Repairing};
   
   \begin{scope}[name=holocleanbg, on background layer]
     \node[draw=black, fill=\fillColor, fit=(text) (module3)] (holoclean) {};
@@ -60,8 +60,8 @@
   \draw[black,->] (holoclean.south) -- (confidence);
   \draw[black,->] (holoclean.south) -- (cleaned);
   
-  % Big Arrows
-  \node[module arrow, left=\hSep of holoclean.west, fill=\fillColor] (bigArrow) {};
+  % Detection
+  \node[module arrow, left=\hSep*2 of module1.west, fill=\fillColor] (bigArrow) {};
   \node[module, left=\hSep of bigArrow,text=white] (detectors) {Detection\\Algorithms};
   \node[module, below left=1mm and 1mm of detectors.west, anchor=west] (detectors2) {Detection\\Algorithms};
 \end{tikzpicture}
