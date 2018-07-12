@@ -129,8 +129,71 @@
   In this case the final set of dirty cells $D_d$ is the union of all sets of dirty cells and the final set of clean cells $D_c$ is set to $D_c = D \setminus D_d$.
 
   \subsection{Probabilistic Model Generation}
+  The second step generates a graphical probabilistic model over all cells of the input database and the input signals.
+  The model expresses the distribution of random variables for all cells in the dataset describing the uncertainty in the cell's values.
+  
+  \holoclean{} generates a probabilistic program written in \ddlog{}, which is executed using \deepdive{}.
+  This program describes a graphical probabilistic model over all cells of the input database and the input signals.
+  
+  First \holoclean generates \ddlog{} relations, which 
+  
+  \begin{itemize}
+    \item summary
+      \begin{itemize}
+        \item each cell $\to$ random variable
+        \item can take values of finite domain = domain of attribute
+        \item repairing constraints express uncertainty over the values of noisy cells
+        \item probabilistic graphical model that describes the distribution of random variables
+        \item $\to$ factor graph
+      \end{itemize}
+    \item compilation process
+      \begin{enumerate}
+        \item generate \ddlog{} relations
+        \item use those relations to form inference rules
+        \item use \deepdive{} to ground the model, yielding the factor graph
+      \end{enumerate}
+    \item \ddlog{} relations
+      \begin{itemize}
+        \item all from dataset
+        \item syntax: $t$ identifies tuples in $D$, $a$ identifies attributes in $D$
+        \item relations in table~\ref{tab:relations}
+      \end{itemize}
+    \item Inference Rules
+      \begin{itemize}
+        \item generation of categorical random variable for each cell.
+        \item minimality constraint
+        \item quantitative statistics
+        \item integrity constraints
+        \item external information
+      \end{itemize}
+    \item result = \ddlog{} relations and inference rules, some weights constant, some variable
+    \item grounding generates all random variables and the factors
+  \end{itemize}
+
+  \begin{table}
+    \caption{Generated \ddlog{} Relations in \holoclean{}. Obtained from~\cite{holoclean}}
+    \label{tab:relations}
+    \begin{tabular}{rlp{0.5\linewidth}@{}}
+      \toprule
+      & Relation & Description\\
+      \midrule
+      1 & \ddrule{Tuple(t)} & Relation of all tuple identifiers.\\
+      2 & \ddrule{InitValue(t,a,v)} & Maps a cell $t.a$ to its initial value in the input dataset.\\
+      3 & \ddrule{Domain(t,a,d)} & Maps a cell $t.a$ to its domain $d \in dom(t.a)$.\\
+      4 & \ddrule{HasFeature(t,a,f)} & Maps a cell $t.a$ to a feature vector $f$.\\
+      5 & \ddrule{ExtDict(t\textsubscript{k},a\textsubscript{k},v,k)} & Maps a dictionary cell $t_k.a_k$ to its value $v$ in the dictionary $k$.\\
+      \bottomrule
+    \end{tabular}
+  \end{table}
   
   \subsection{Data Repairing}
+  \begin{itemize}
+    \item now: clean and dirty cells as training data for statistical learning of factor graph weights
+    \item Bayes inference to obtain marginal probabilities = distribution of all values of a random variable (for all randvars)
+    \item approximate approach using gibbs sampling~\cite{gibbssampling}
+    \item estimates values $\hat{v}$ of dirty cells
+    \item maximum a posteriori estimates are used to repair dataset
+  \end{itemize}
 
 \section{Performance of \holoclean{}}\label{sec:performance}
 
