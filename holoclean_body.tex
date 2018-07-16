@@ -129,62 +129,89 @@
   In this case the final set of dirty cells $D_d$ is the union of all sets of dirty cells and the final set of clean cells $D_c$ is set to $D_c = D \setminus D_d$.
 
   \subsection{Probabilistic Model Generation}
-  The second step generates a graphical probabilistic model over all cells of the input database and the input signals.
-  The model expresses the distribution of random variables for all cells in the dataset describing the uncertainty in the cell's values.
-  
   \holoclean{} generates a probabilistic program written in \ddlog{}, which is executed using \deepdive{}.
   This program describes a graphical probabilistic model over all cells of the input database and the input signals.
   
-  First \holoclean generates \ddlog{} relations, which 
+  Each cell in the dataset $D$ is assigned to a random variable, which can take values of a finite domain representing the domain of its attribute.
+  The random variables are linked via repairing constraints, which are derived from the various input signals.
+  They express the uncertainty over the values of noisy cells.
+  \holoclean{} uses a factor graph to represent this probabilistic model and perform computations on it.
   
-  \begin{itemize}
-    \item summary
-      \begin{itemize}
-        \item each cell $\to$ random variable
-        \item can take values of finite domain = domain of attribute
-        \item repairing constraints express uncertainty over the values of noisy cells
-        \item probabilistic graphical model that describes the distribution of random variables
-        \item $\to$ factor graph
-      \end{itemize}
-    \item compilation process
-      \begin{enumerate}
-        \item generate \ddlog{} relations
-        \item use those relations to form inference rules
-        \item use \deepdive{} to ground the model, yielding the factor graph
-      \end{enumerate}
-    \item \ddlog{} relations
-      \begin{itemize}
-        \item all from dataset
-        \item syntax: $t$ identifies tuples in $D$, $a$ identifies attributes in $D$
-        \item relations in table~\ref{tab:relations}
-      \end{itemize}
-    \item Inference Rules
-      \begin{itemize}
-        \item generation of categorical random variable for each cell.
-        \item minimality constraint
-        \item quantitative statistics
-        \item integrity constraints
-        \item external information
-      \end{itemize}
-    \item result = \ddlog{} relations and inference rules, some weights constant, some variable
-    \item grounding generates all random variables and the factors
-  \end{itemize}
-
+  The compilation process consists of three steps which are executed consecutively:
+  \begin{enumerate}
+    \item Generate \ddlog{} relations.
+    \item Use those relations to form inference rules.
+    \item Use \deepdive{} to ground the model, yielding the factor graph.
+  \end{enumerate}
+    
+  First \holoclean{} generates \ddlog{} relations, which encode information about the dataset $D$.
+  The relations can be obtained by simple transformations of the original dataset and are shown in table~\ref{tab:relations}.
+  Variable $t$ identifies tuples in the dataset $D$ and $a$ identifies attributes in $D$.
+  Relation 5 (\ddrule{ExtDict}) is optional and only generated if there is an external dictionary provided by the user.
+  \holoclean{} creates a categorical random variable for each cell $t.a$ in the dataset:
+  \begin{equation}
+    Value?(t,a,d):-Domain(t,a,d)\label{equ:cells}
+  \end{equation}
+  Afterwards the \ddlog{} relations are used to form inference rules over the random variables.
+  
   \begin{table}
     \caption{Generated \ddlog{} Relations in \holoclean{}. Obtained from~\cite{holoclean}}
     \label{tab:relations}
-    \begin{tabular}{rlp{0.5\linewidth}@{}}
+    \begin{tabular}{rlp{0.6\linewidth}@{}}
       \toprule
       & Relation & Description\\
       \midrule
       1 & \ddrule{Tuple(t)} & Relation of all tuple identifiers.\\
-      2 & \ddrule{InitValue(t,a,v)} & Maps a cell $t.a$ to its initial value in the input dataset.\\
+      2 & \ddrule{InitValue(t,a,v)} & Maps a cell $t.a$ to its initial value $v$ in the input dataset.\\
       3 & \ddrule{Domain(t,a,d)} & Maps a cell $t.a$ to its domain $d \in dom(t.a)$.\\
       4 & \ddrule{HasFeature(t,a,f)} & Maps a cell $t.a$ to a feature vector $f$.\\
       5 & \ddrule{ExtDict(t\textsubscript{k},a\textsubscript{k},v,k)} & Maps a dictionary cell $t_k.a_k$ to its value $v$ in the dictionary $k$.\\
       \bottomrule
     \end{tabular}
   \end{table}
+  
+  \subsubsection*{Minimality Principle}
+  \holoclean{} uses the minimality principle as the prior that the dataset consists of more clean cells than erroneous ones.
+  This is encoded in the following rule, which maps each cell's value to its initial value in the input dataset:
+  \begin{equation}
+    Value?(t,a,d):-InitValue(t,a,d)\ weight=w\label{equ:minimality}
+  \end{equation}
+  $w$ is constant and represents the strength of this prior.
+  
+  \subsubsection*{Quantitative Statistics}
+  Relation \ddrule{HasFeature} is used to capture quantitative statistics of the input dataset:
+  \begin{multline}
+    Value?(t,a,d):-\\HasFeature(t,a,f)\ weight=w(d,f)\label{equ:statistics}
+  \end{multline}
+  To encode the co-occurrences of attribute values \ddrule{HasFeature} stores the values of other cells in the same tuple of a given cell.
+  Users can add more features to \ddrule{HasFeature}.
+  This allows for example to track the provenance and prioritize data sources differently.
+  \holoclean{} parametrizes the weight annotation for the feature inference rule by the value of the cell $d$ and the feature vector $f$ to allow different confidence levels for the combinations of the values of $d$ and $f$.
+  Those weights are not set during the compilation of the rules itself and can be learned later on.
+  
+  \subsubsection*{Integrity Constraints}
+  \begin{multline}
+    !
+    \begin{pmatrix}
+      Value?(t_1,DBAName,d_1) \land\\
+      Value?(t_2,DBAName, d)_2 \land\\
+      Value?(t_1,FacilityType,f_1) \land\\
+      Value?(t_2,FacilityType,f_2)
+    \end{pmatrix}
+    :-\\
+    Tuple(t_1),Tuple(t_2)[d_1 = d_2, f_1 \neq f_2]\ weight=w\label{equ:ic}
+  \end{multline}
+  
+  \subsubsection*{External Information}
+  \begin{equation}
+    Value(t,a,d):-Matched(t,a,d,k)\ weight=w(k)\label{equ:matching}
+  \end{equation}
+  
+  \begin{itemize}
+    \item result = \ddlog{} relations and inference rules, some weights constant, some variable
+    \item grounding generates all random variables and the factors
+  \end{itemize}
+
   
   \subsection{Data Repairing}
   \begin{itemize}
