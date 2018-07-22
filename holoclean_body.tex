@@ -74,7 +74,7 @@
   Over all tuples $t \in D$ of a database instance $D$ not all predicates $P_k$ are allowed to be true.
   $P_k$ are defined as $v_1 \circ v_2$ or $v_1 \circ c$ with $v_1, v_2 \in \{t_i.A, t_j.A\}$, where $A$ denotes an attribute of the dataset $D$.
   The operator $\circ$ can be one of $\{=,<,>,\neq,\leq,\geq\}$~\cite{chu2013discoveringdc}.
-  For readability reasons we use functional dependencies of the form $t_i.A_1 \rightarrow t_j.A_2$ to express integrity constraints in this report.
+  For readability reasons we use functional dependencies of the form $A_1 \to A_2$ to express integrity constraints in this report.
   They can easily be converted to denial constraints~\cite{fd_to_dc}.
   
   \subsection{\deepdive{} and Factor Graphs}
@@ -186,32 +186,56 @@
   Users can customize \holoclean{} by adding more features to the \ddrule{HasFeature} relation.
   This allows for example to track the provenance of cell values and prioritize data sources differently.
   \holoclean{} parametrizes the weight annotation for the feature inference rule by the value of the cell $d$ and the feature vector $f$ to allow different confidence levels for the combinations of the values of $d$ and $f$.
-  Those weights are not set during the compilation of the rules itself and can be learned later on.
+  Those weights are not set during the generation of the rules itself and can be learned later on.
   
   \subsubsection*{Integrity Constraints}
+  The second input signal are \glspl{ic}.
+  For each denial constraint \holoclean{} generates a new inference rule containing the involved cell's random variables in the head of the rule and the predicate constraints in the body.
+  The quantifier of denial constraints ($\forall t_1, t_2$) is converted to a self-join of relation \ddrule{Tuple}.
   
+  Lets consider the following denial constraint only containing two predicates that represents the functional dependency $t.A \to t.B$ as an example:
+  \begin{equation}
+    \forall t_1, t_2 \in D: \neg(t_1.A = t_2.A \land t_1.B \neq t_2.B)
+  \end{equation}
+  Each instance of this constraint involves four cells ($t_1.A$, $t_1.B$, $t_2.A$ and $t_2.B$).
+  The conjunction of the corresponding random variables form the head of the \ddlog{} rule as shown in equation~\ref{equ:ic}:
   \begin{multline}
     !
     \begin{pmatrix}
-      Value?(t_1,DBAName,d_1) \land\\
-      Value?(t_2,DBAName, d)_2 \land\\
-      Value?(t_1,FacilityType,f_1) \land\\
-      Value?(t_2,FacilityType,f_2)
+      Value?(t_1,A,v_1) \land\\
+      Value?(t_2,A,v_2) \land\\
+      Value?(t_1,B,u_1) \land\\
+      Value?(t_2,B,u_2)
     \end{pmatrix}
-    :-\\
-    Tuple(t_1),Tuple(t_2)[d_1 = d_2, f_1 \neq f_2]\ weight=w\label{equ:ic}
+    :- Tuple(t_1),Tuple(t_2)\\
+    [v_1 = v_2, u_1 \neq u_2]\ weight=w\label{equ:ic}
   \end{multline}
+  The body of the rule then maps the cells to the corresponding tuples via relation \ddrule{Tuple}.
+  The conditions of the predicates work on the values of the cells ($v_1$, $v_2$, $u_1$ and $u_2$).
+  This template can then be applied to all combination of tuples in $D$.
+  
+  The weight $w$ of each rule specifies how much emphasis is put on fulfilling it.
+  Larger weights imply more emphasis on the rule.
+  In general, the semantic of a denial constraint tells us that it must not be fulfilled for a dataset to be acceptable.
+  This can be achieved by setting $w=\infty$.
+  \holoclean{} relaxes those \textit{hard constraints} to \textit{soft constraints} by setting $w$ to a constant value.
+  This allows \holoclean{} to perform more efficient probabilistic inference.
   
   \subsubsection*{External Information}
+  Based on external dictionaries and matching dependencies \holoclean{} calculates all matches of the noisy dataset's cells and the values found in the dictionaries for the cells.
+  This matches are stored in a new relation \ddrule{Matched(t,a,v,k)}, where $k$ denotes the dictionary which provided the value.
+  For each dictionary $k$ and all cells (identified by $t.a$) the relation \ddrule{Matched(t,a,v,k)} looks up the suggested dictionary value.
+  This relation is used to create the following inference rule for the external information:
   \begin{equation}
     Value(t,a,d):-Matched(t,a,d,k)\ weight=w(k)\label{equ:matching}
   \end{equation}
+  Each dictionary can be trusted more or less and therefore the weight for this rules is parameterized by the dictionary identifier $k$.
+  The weights can be learned later on.
   
-  \begin{itemize}
-    \item result = \ddlog{} relations and inference rules, some weights constant, some variable
-    \item grounding generates all random variables and the factors
-  \end{itemize}
-
+  \bigskip
+  After all relations and inference rules were generated, the \ddlog{} program is passed to \deepdive{} to create the factor graph.
+  This step will generate all random variables for the cells and the factors between them.
+  Some weights are already set by \holoclean{}, others are just represented by variables and will be learned in the next step.
   
   \subsection{Data Repairing}
   \begin{itemize}
