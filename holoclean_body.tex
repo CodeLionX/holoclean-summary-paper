@@ -11,14 +11,14 @@
 
   One way to improve data quality is data cleaning.
   It consists of two steps: Error detection and data repairing.
-  Error detection describes to process of identifying incorrect values in a dataset.
+  Error detection describes the process of identifying incorrect values in a dataset.
   Subsequently data repairing transforms the erroneous dataset into a new one removing detected errors, so the new dataset adheres to data quality requirements.
 
   \bigskip
   \textbf{Related Work:}
   Many researchers have made efforts to automate the task of error detection.
   \begin{itemize}
-    \item \textbf{TBD:}
+    \item \textbf{TODO:}
     \item Most of the approaches try to detect the violation of \glspl{ic}.
     \item duplicate detection
     \item outlier detection
@@ -48,7 +48,7 @@
   \bigskip
   Most of the tools limit themselves to only one signal to perform data repairing, ignoring other information sources.
   Each type of signal is associated with a different action on the dataset and has its own downsides.
-  Data repairs that use \glspl{ic} could introduce incorrect repairs, because they are relying on the \textit{minimality} principle and assume that most of the data values are clean.
+  Data repairs that use \glspl{ic} could introduce incorrect repairs, because they are relying on the \textit{minimality principle} and assume that most of the data values are clean.
   This is not necessarily the case and minimal repairs not always correspond to correct repairs~\cite{holoclean}.
   Repair algorithms relying on external information are dependent on the coverage of the external data source and can therefore perform poorly.
   Quantitative statistics heavily depend on the available information in the dataset itself.
@@ -59,7 +59,7 @@
   Based on this combined view on the data and their inconsistencies they can then use statistical learning and probabilistic inference to suggest repairs for the dataset.
   
   \begin{itemize}
-    \item \textbf{Paper Preview/Overview}
+    \item \textbf{TODO: Paper Preview/Overview}
   \end{itemize}
 
 
@@ -67,21 +67,20 @@
   In the following paragraphs we review the terminology used in the next sections.
   
   \subsection{Integrity Constraints}
-  Users of the \holoclean{} framework can specify \glspl{ic} in form of denial constraints.
-  They combine different types of integrity definitions.
+  Users of the \holoclean{} framework can specify \glspl{ic} in form of denial constraints, which combine different types of integrity definitions.
   Functional Dependencies as well as conditional functional dependencies can be expressed as denial constraints~\cite{fd_to_dc}.
   A denial constraint states that all predicates of it cannot be true at the same time, otherwise, there is a consistency conflict.
   It is notated as $\forall t_i, t_j \in D: \neg(P_1 \wedge \dots \wedge P_K)$.
   Over all tuples $t \in D$ of a database instance $D$ not all predicates $P_k$ are allowed to be true.
   $P_k$ are defined as $v_1 \circ v_2$ or $v_1 \circ c$ with $v_1, v_2 \in \{t_i.A, t_j.A\}$, where $A$ denotes an attribute of the dataset $D$.
   The operator $\circ$ can be one of $\{=,<,>,\neq,\leq,\geq\}$~\cite{chu2013discoveringdc}.
-  In this report we use functional dependencies of the form $t_i.A_1 \rightarrow t_j.A_2$ to express integrity constraints for readability reasons.
-  They can easily converted to denial constraints~\cite{fd_to_dc}.
+  For readability reasons we use functional dependencies of the form $t_i.A_1 \rightarrow t_j.A_2$ to express integrity constraints in this report.
+  They can easily be converted to denial constraints~\cite{fd_to_dc}.
   
   \subsection{\deepdive{} and Factor Graphs}
   \holoclean{} relies on \deepdive{} to perform statistical learning and inference.
   It is a data management system developed at Stanford University, which allows scalable statistical inference on big unclean datasets~\cite{deepdive}.
-  \holoclean{} uses \deepdive{} to create a factor graph over all input signals and data cells.
+  \holoclean{} uses \deepdive{} to create a factor graph~\cite{pgmFactorGraph} over all input signals and data cells.
   The factor graph can be defined via a declarative language, called \ddlog{}.
   A collection of inference rules in \deepdive{} corresponds to a probabilistic model.
   Such inference rules are defined over a relation of random variables with weight annotations.
@@ -102,8 +101,8 @@
 \section{The \holoclean{} Framework}\label{sec:framework}
   Figure~\ref{fig:architecture} shows an overview over the framework's architecture.
   It takes as input a dirty dataset and repairing constraints.
-  Those are \glspl{ic} in form of denial constraints and external clean information in form of matching dependencies and a dictionary.
-  Matching dependency map values of dataset cells to the corresponding entries in an external clean dictionary.
+  Those are \glspl{ic} in form of denial constraints and external clean data in form of matching dependencies and a dictionary.
+  Matching dependency map values of the unclean dataset cells to the corresponding entries in an external clean dictionary.
   As \holoclean{} treats error detection as a black box, the user has to specify error detection algorithms as a side-input.
    
   \begin{figure}
@@ -113,10 +112,10 @@
     \label{fig:architecture}
   \end{figure}
 
-  \holoclean{} outputs repair suggestions for all cells, that were not marked as clean.
+  \holoclean{} outputs repair suggestions for all cells which were not marked as clean.
   For each noisy cell it computes the marginal probabilities of all values of its domain.
   For example, if the cell $t_1.a$ is assigned value $\hat{v}$ with a probability of $0.73$, this means that \holoclean{} is $73\%$ confident about this repair.
-  In a second step, \holoclean{} repairs the noisy cells by assigning it to the value with the highest probability.
+  In a second step, \holoclean{} repairs the noisy cells by assigning it to the value suggestions with the highest probability.
   
   To compute these repairs, \holoclean{} performs three consecutive steps: \textsf{Error Detection}, \textsf{Probabilistic Model Generation} and \textsf{Data Repairing}.
   They are described in the next sections in more detail.
@@ -126,13 +125,13 @@
   \holoclean{} treats this error detection step as a black box and the user can specify and use any method to separate dirty and clean cells of each other.
   The framework already provides exemplary algorithms that use denial constraints, outlier detection or external labeled data.
   It is possible to use several detection algorithms at once.
-  In this case the final set of dirty cells $D_d$ is the union of all sets of dirty cells and the final set of clean cells $D_c$ is set to $D_c = D \setminus D_d$.
+  In this case the final set of dirty cells $D_d$ is the union of all sets of dirty cells and the final set of clean cells $D_c$ is the set $D_c = D \setminus D_d$.
 
   \subsection{Probabilistic Model Generation}
   \holoclean{} generates a probabilistic program written in \ddlog{}, which is executed using \deepdive{}.
   This program describes a graphical probabilistic model over all cells of the input database and the input signals.
   
-  Each cell in the dataset $D$ is assigned to a random variable, which can take values of a finite domain representing the domain of its attribute.
+  Each cell in the dataset $D$ is assigned to a random variable, which can take values of a finite domain representing the domain of the cell's attribute.
   The random variables are linked via repairing constraints, which are derived from the various input signals.
   They express the uncertainty over the values of noisy cells.
   \holoclean{} uses a factor graph to represent this probabilistic model and perform computations on it.
@@ -145,14 +144,14 @@
   \end{enumerate}
     
   First \holoclean{} generates \ddlog{} relations, which encode information about the dataset $D$.
-  The relations can be obtained by simple transformations of the original dataset and are shown in table~\ref{tab:relations}.
+  They can be obtained by simple transformations of the original dataset and are shown in table~\ref{tab:relations}.
   Variable $t$ identifies tuples in the dataset $D$ and $a$ identifies attributes in $D$.
   Relation 5 (\ddrule{ExtDict}) is optional and only generated if there is an external dictionary provided by the user.
-  \holoclean{} creates a categorical random variable for each cell $t.a$ in the dataset:
+  \holoclean{} creates a categorical random variable for each cell $t.a$ in the dataset using relation 3 (\ddrule{Domain}):
   \begin{equation}
     Value?(t,a,d):-Domain(t,a,d)\label{equ:cells}
   \end{equation}
-  Afterwards the \ddlog{} relations are used to form inference rules over the random variables.
+  Afterwards the \ddlog{} relations are used to form inference rules over the random variables:
   
   \begin{table}
     \caption{Generated \ddlog{} Relations in \holoclean{}. Obtained from~\cite{holoclean}}
@@ -176,20 +175,21 @@
   \begin{equation}
     Value?(t,a,d):-InitValue(t,a,d)\ weight=w\label{equ:minimality}
   \end{equation}
-  $w$ is constant and represents the strength of this prior.
+  The weight $w$ is set to a constant value during compilation of the \ddlog{} rules and represents the strength of this prior.
   
   \subsubsection*{Quantitative Statistics}
   Relation \ddrule{HasFeature} is used to capture quantitative statistics of the input dataset:
   \begin{multline}
     Value?(t,a,d):-\\HasFeature(t,a,f)\ weight=w(d,f)\label{equ:statistics}
   \end{multline}
-  To encode the co-occurrences of attribute values \ddrule{HasFeature} stores the values of other cells in the same tuple of a given cell.
-  Users can add more features to \ddrule{HasFeature}.
-  This allows for example to track the provenance and prioritize data sources differently.
+  To encode the co-occurrences of attribute values \ddrule{HasFeature} stores the values of other cells in the same tuple of a given cell in a feature vector.
+  Users can customize \holoclean{} by adding more features to the \ddrule{HasFeature} relation.
+  This allows for example to track the provenance of cell values and prioritize data sources differently.
   \holoclean{} parametrizes the weight annotation for the feature inference rule by the value of the cell $d$ and the feature vector $f$ to allow different confidence levels for the combinations of the values of $d$ and $f$.
   Those weights are not set during the compilation of the rules itself and can be learned later on.
   
   \subsubsection*{Integrity Constraints}
+  
   \begin{multline}
     !
     \begin{pmatrix}
