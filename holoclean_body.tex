@@ -238,13 +238,22 @@
   Some weights are already set by \holoclean{}, others are just represented by variables and will be learned in the next step.
   
   \subsection{Data Repairing}
-  \begin{itemize}
-    \item now: clean and dirty cells as training data for statistical learning of factor graph weights
-    \item Bayes inference to obtain marginal probabilities = distribution of all values of a random variable (for all randvars)
-    \item approximate approach using gibbs sampling~\cite{gibbssampling}
-    \item estimates values $\hat{v}$ of dirty cells
-    \item maximum a posteriori estimates are used to repair dataset
-  \end{itemize}
+  To repair the dataset $D$ \holoclean{} first has to learn all weights.
+  This is done via statistical learning in \deepdive{}.
+  Random variables in the factor graph that correspond to the clean cell set $D_c$ are used as labeled examples.
+  
+  After fixing all weights \holoclean{} now has to infer the correct values for the dirty cells in set $D_d$.
+  Therefore \holoclean{} computes the distribution of all values a random variable can be assigned to.
+  For all random variables corresponding to the cells in $D_d$ the marginal probabilities for all possible values are obtained via Bayes inference over the joint distribution.
+  As this is a very computational expensive task an approximate approach is used: Gibbs sampling~\cite{gibbssampling}.
+  It is a sampling technique to estimate the full posterior probability distributions for all random variables corresponding to the noisy cells.
+  
+  \holoclean{}'s goal is to output a cleaned dataset.
+  To achieve this it assigns the maximum a posteriori estimates as the values of the noisy cells.
+  Each repair is automatically annotated with its marginal probability which represents the confidence of the system that this repair is correct~\cite{holoclean}. 
+  
+  Example: If we consider a cell $c$, its domain $dom(c)=\{v_1, v_2\}$ and the inferred posterior distribution $P(c) = ( P(c = v_1), P(c = v_2) ) = ( 0.81, 0.19 )$ then \holoclean{} proposes the value $v_1$ as a repair for cell $c$ as it is the estimate with the highest marginal probability.
+  This also means that \holoclean{} is $81\%$ confident about this repair.
 
 \section{Performance of \holoclean{}}\label{sec:performance}
 
