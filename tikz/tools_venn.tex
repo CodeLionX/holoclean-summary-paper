@@ -1,0 +1,51 @@
+% !TeX root = ../holoclean.tex
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+
+% Data Repairing Tools Diagram
+\begin{tikzpicture}[
+    xscale=4, yscale=4,>=triangle 60,font=\sffamily,
+    tool/.style={
+      circle,
+      align=center
+    },
+    bubble/.style={
+      draw=black,
+      fill=black!50,
+      fill opacity=0.3
+    }
+  ]  
+  
+  \begin{scope} 
+    
+    % Venn bubbles
+    \draw[bubble] (0,0.55) circle (0.75);
+    \node[font=\bfseries, text=blue] at (0,1.1) {External Knowledge};
+    
+    \draw[bubble] (-0.5,-0.25) circle (0.75);
+    \node[font=\bfseries, text=blue] at (-0.5,-0.8) {Integrity Constraints};
+    
+    \draw[bubble] (0.5,-0.25) circle (0.75);
+    \node[font=\bfseries, text=blue] at (0.5,-0.8) {Statistics about Data};
+    
+    % Middle
+    \node[tool] at (0,0) {\holoclean{}\\\cite{holoclean}};
+    
+    % Up
+    \node[tool] at (0,0.7) {KATARA \cite{katara}};
+    
+    % Left
+    \node[tool] at (-0.9,0.05) {AJAX \cite{ajax}};
+    \node[tool] at (-0.6,-0.2) {Guided Data\\Repair \cite{gdr}};
+    \node[tool] at (-0.9,-0.45) {Editing Rules \cite{editing_rules}};
+    \node[tool] at (-0.5,-0.65) {Data Tamer \cite{data_tamer}};
+    
+    % Right
+    \node[tool, align=center] at (0.85,0) {SCARE \cite{scare}}; 
+    \node[tool, align=center] at (0.45,-0.4) {Potter's\\Wheel \cite{potters_wheel}};
+    \node[tool, align=center] at (0.75,-0.2) {Data\\Wrangler \cite{data_wrangler}};
+    \node[tool, align=center] at (0.85,-0.6) {Trifacta\\Wrangler \cite{trifacta_wrangler}};
+    
+  \end{scope}
+  
+\end{tikzpicture}

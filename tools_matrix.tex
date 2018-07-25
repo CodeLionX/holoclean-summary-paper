@@ -1,0 +1,28 @@
+% !TeX root = holoclean.tex
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+
+\begin{table*}
+    \caption{Data Repairing Tool Matrix}
+    \label{tab:tools}
+    \newcommand{\h}{High}
+    \newcommand{\m}{Medium}
+    \newcommand{\lo}{Low}
+    \begin{tabular}{lcccc}
+    \toprule
+    	\textbf{Repairing Tool}                    & \textbf{Degree of}  &          \multicolumn{3}{c}{\textbf{Input Signals}}          \\
+    	                                           & \textbf{Automation} & \textbf{Statistics} & \textbf{ICs} & \textbf{Ext. Knowledge} \\
+    \midrule
+    	\holoclean{} \cite{holoclean}              &         \h          &          X          &      X       &            X            \\
+    	SCARE \cite{scare}                         &         \h          &          X          &              &  \\
+    	AJAX \cite{ajax}                           &         \h          &                     &      X       &  \\
+    	Guided Data Repair \cite{gdr}              &         \m          &                     &      X       &  \\
+    	Editing Rules \cite{editing_rules}         &         \m          &                     &      X       &  \\
+    	Data Tamer \cite{data_tamer}               &         \lo         &                     &      X       &  \\
+    	KATARA \cite{katara}                       &         \lo         &                     &              &            X            \\
+    	Potter's Wheel \cite{potters_wheel}        &         \lo         &          X          &              &  \\
+    	Data Wrangler \cite{data_wrangler}         &         \lo         &          X          &              &  \\
+    	Trifacta Wrangler \cite{trifacta_wrangler} &         \lo         &          X          &              &  \\
+    \bottomrule
+    \end{tabular}
+  \end{table*}
