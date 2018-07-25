@@ -1,12 +1,16 @@
-@article{holoclean,
+@String{SIGMOD = "Proceedings of the International Conference on Management of Data SIGMOD"}
+@String{ACM = "ACM"}
+@String{VLDB = "Proceedings of the VLDB Endowment"}
+@String{VLDBEndowment = "VLDB Endowment"}
+
+@inproceedings{holoclean,
   title={Holoclean: Holistic data repairs with probabilistic inference},
   author={Rekatsinas, Theodoros and Chu, Xu and Ilyas, Ihab F and R{\'e}, Christopher},
-  journal={Proceedings of the VLDB Endowment},
-  volume={10},
-  number={11},
-  pages={1190--1201},
+  booktitle=VLDB,
   year={2017},
-  publisher={VLDB Endowment}
+  volume={10},
+  pages={1190--1201},
+  publisher=VLDBEndowment
 }
 
 @article{gibbssampling,
@@ -18,41 +22,30 @@
 
 % introduction
 @article{Redman:quality_disaster,
-  author        = {Thomas C. Redman},
   title         = {Data: An unfolding quality disaster},
+  author        = {Thomas C. Redman},
   journal       = {Information Management Magazine},
-  month         = {aug},
   year          = {2004},
+  month         = {aug},
 }
 @article{cost_of_low_qual,
-  author = {Anders Haug and Frederik Zachariassen and Dennis van Liempd},
   title = {The costs of poor data quality},
+  author = {Anders Haug and Frederik Zachariassen and Dennis van Liempd},
   journal = {Journal of Industrial Engineering and Management},
+  year = {2011},
   volume = {4},
   number = {2},
-  year = {2011},
-  keywords = {data quality, master data management, data quality costs},
-  issn = {2013-0953},
   pages = {168--193},
-  doi = {10.3926/jiem..v4n2.p168-193},
-  url = {http://www.jiem.org/index.php/jiem/article/view/232}
+  keywords = {data quality, master data management, data quality costs},
 }
-@article{errorDetectionSurvey,
-  author = {Abedjan, Ziawasch and Chu, Xu and Deng, Dong and Fernandez, Raul Castro and Ilyas, Ihab F. and Ouzzani, Mourad and Papotti, Paolo and Stonebraker, Michael and Tang, Nan},
+@inproceedings{errorDetectionSurvey,
   title = {Detecting Data Errors: Where Are We and What Needs to Be Done?},
-  journal = {Proc. VLDB Endow.},
-  issue_date = {August 2016},
-  volume = {9},
-  number = {12},
-  month = aug,
+  author = {Abedjan, Ziawasch and Chu, Xu and Deng, Dong and Fernandez, Raul Castro and Ilyas, Ihab F. and Ouzzani, Mourad and Papotti, Paolo and Stonebraker, Michael and Tang, Nan},
+  journal = VLDB,
   year = {2016},
-  issn = {2150-8097},
+  volume = {9},
   pages = {993--1004},
-  numpages = {12},
-  url = {http://dx.doi.org/10.14778/2994509.2994518},
-  doi = {10.14778/2994509.2994518},
-  acmid = {2994518},
-  publisher = {VLDB Endowment},
+  publisher = VLDBEndowment,
 } 
 @article{dataRepairingEvaluation,
   title={Effective Data Cleaning with Continuous Evaluation.},
@@ -69,65 +62,56 @@
   title={Minimal-change integrity maintenance using tuple deletions},
   author={Chomicki, Jan and Marcinkowski, Jerzy},
   journal={Information and Computation},
+  year={2005},
   volume={197},
   number={1-2},
   pages={90--121},
-  year={2005},
   publisher={Elsevier}
 }
-@article{chu2013discoveringdc,
+@inproceedings{chu2013discoveringdc,
   title={Discovering denial constraints},
   author={Chu, Xu and Ilyas, Ihab F and Papotti, Paolo},
-  journal={Proceedings of the VLDB Endowment},
-  volume={6},
-  number={13},
-  pages={1498--1509},
+  booktitle=VLDB,
   year={2013},
-  publisher={VLDB Endowment}
+  volume={6},
+  pages={1498--1509},
+  publisher=VLDBEndowment
 }
 @article{deepdive,
   title={DeepDive: Web-scale Knowledge-base Construction using Statistical Learning and Inference.},
   author={Niu, Feng and Zhang, Ce and R{\'e}, Christopher and Shavlik, Jude W},
   journal={VLDS},
+  year={2012},
   volume={12},
   pages={25--28},
-  year={2012},
   publisher={Istanbul}
 }
 @inbook{pgmFactorGraph,
   title={Probabilistic Graphical Models: Principles and Techniques},
   author={Friedman, Nir and Koller, D},
   year={2009},
+  pages={123--124},
   publisher={The MIT Press Cambridge},
-  pages={123--124}
 }
 
 % tools
 @inproceedings{katara,
-  author = {Chu, Xu and Morcos, John and Ilyas, Ihab F. and Ouzzani, Mourad and Papotti, Paolo and Tang, Nan and Ye, Yin},
   title = {KATARA: A Data Cleaning System Powered by Knowledge Bases and Crowdsourcing},
-  booktitle = {Proceedings of the 2015 ACM SIGMOD International Conference on Management of Data},
+  author = {Chu, Xu and Morcos, John and Ilyas, Ihab F. and Ouzzani, Mourad and Papotti, Paolo and Tang, Nan and Ye, Yin},
+  booktitle = SIGMOD,
   year = {2015},
-  isbn = {978-1-4503-2758-9},
-  location = {Melbourne, Victoria, Australia},
   pages = {1247--1261},
-  numpages = {15},
-  url = {http://doi.acm.org/10.1145/2723372.2749431},
-  doi = {10.1145/2723372.2749431},
-  acmid = {2749431},
-  publisher = {ACM},
-  address = {New York, NY, USA},
+  publisher = ACM,
   keywords = {crowdsourcing, data cleaning, data quality, knowledge base},
 } 
-@article{gdr,
+@inproceedings{gdr,
   title={Guided data repair},
   author={Yakout, Mohamed and Elmagarmid, Ahmed K and Neville, Jennifer and Ouzzani, Mourad and Ilyas, Ihab F},
-  journal={Proceedings of the VLDB Endowment},
-  volume={4},
-  number={5},
-  pages={279--289},
+  booktitle=VLDB,
   year={2011},
-  publisher={VLDB Endowment}
+  volume={4},
+  pages={279--289},
+  publisher=VLDBEndowment
 }
 @inproceedings{data_tamer,
   title={Data Curation at Scale: The Data Tamer System.},
@@ -138,51 +122,44 @@
 @inproceedings{potters_wheel,
   title={Potter's wheel: An interactive data cleaning system},
   author={Raman, Vijayshankar and Hellerstein, Joseph M},
-  booktitle={VLDB},
+  booktitle=VLDB,
+  year={2001},
   volume={1},
   pages={381--390},
-  year={2001}
+  publisher=VLDBEndowment
 }
 @inproceedings{data_wrangler,
-  author = {Kandel, Sean and Paepcke, Andreas and Hellerstein, Joseph and Heer, Jeffrey},
   title = {Wrangler: Interactive Visual Specification of Data Transformation Scripts},
+  author = {Kandel, Sean and Paepcke, Andreas and Hellerstein, Joseph and Heer, Jeffrey},
   booktitle = {Proceedings of the SIGCHI Conference on Human Factors in Computing Systems},
   year = {2011},
-  isbn = {978-1-4503-0228-9},
-  location = {Vancouver, BC, Canada},
   pages = {3363--3372},
-  numpages = {10},
-  url = {http://doi.acm.org/10.1145/1978942.1979444},
-  doi = {10.1145/1978942.1979444},
-  acmid = {1979444},
-  publisher = {ACM},
-  address = {New York, NY, USA},
+  publisher = ACM,
   keywords = {data analysis, data cleaning, transformation, visualization, wrangler},
 } 
 @techreport{trifacta_wrangler,
-  author={Joe Hellerstein and Karthik Sethuraman},
   title={Whitepaper: Making Data Wrangling Interactive at Any Scale},
-  institution={Trifacta},
+  author={Joe Hellerstein and Karthik Sethuraman},
   year={2017},
   month={nov}
+  institution={Trifacta},
 }
 @inproceedings{scare,
   title={Don't be SCAREd: use SCalable Automatic REpairing with maximal likelihood and bounded changes},
   author={Yakout, Mohamed and Berti-{\'E}quille, Laure and Elmagarmid, Ahmed K},
-  booktitle={Proceedings of the 2013 ACM SIGMOD International Conference on Management of Data},
-  pages={553--564},
   year={2013},
-  organization={ACM}
+  booktitle=SIGMOD,
+  pages={553--564},
+  organization=ACM
 }
 @article{editing_rules,
   title={Towards certain fixes with editing rules and master data},
   author={Fan, Wenfei and Li, Jianzhong and Ma, Shuai and Tang, Nan and Yu, Wenyuan},
-  journal={Proceedings of the VLDB Endowment},
-  volume={3},
-  number={1-2},
-  pages={173--184},
   year={2010},
-  publisher={VLDB Endowment}
+  journal=VLDB,
+  volume={3},
+  pages={173--184},
+  publisher=VLDBEndowment
 }
 @phdthesis{ajax,
   title={Declarative data cleaning: Language, model, and algorithms},
