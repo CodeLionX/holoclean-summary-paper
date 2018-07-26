@@ -1,6 +1,17 @@
-% !TeX root = ../holoclean.tex
+% !TeX root = architecture.tex
 % !TeX encoding = UTF-8
 % !TeX spellcheck = en_US
+
+\documentclass[crop,tikz]{standalone}
+\usetikzlibrary{
+  positioning,
+  arrows,
+  backgrounds,
+  fit,
+  calc
+}
+
+\begin{document}
 
 % HoloClean Architecture
 \begin{tikzpicture}[
@@ -61,3 +72,5 @@
   \node[module, below left=1mm and 1mm of detectors.west, anchor=west] (detectors2) {Detection\\Algorithms};
   \draw[black,->] (detectors.east) -- (module1.west);
 \end{tikzpicture}
+
+\end{document}

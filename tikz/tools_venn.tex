@@ -1,10 +1,23 @@
-% !TeX root = ../holoclean.tex
+% !TeX root = tools_venn.tex
 % !TeX encoding = UTF-8
 % !TeX spellcheck = en_US
+\documentclass[crop,tikz]{standalone}
+\usetikzlibrary{
+  positioning,
+  arrows
+}
+
+\makeatletter
+\@ifundefined{holoclean}{%
+  \newcommand{\holoclean}{HoloClean}%
+}{}
+\makeatother
+
+\begin{document}
 
 % Data Repairing Tools Diagram
 \begin{tikzpicture}[
-    xscale=4, yscale=4,>=triangle 60,font=\sffamily,
+    xscale=4.3, yscale=4.3,>=triangle 60,font=\sffamily,
     tool/.style={
       circle,
       align=center
@@ -49,3 +62,5 @@
   \end{scope}
   
 \end{tikzpicture}
+
+\end{document}

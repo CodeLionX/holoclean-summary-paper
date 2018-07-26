@@ -1,6 +1,20 @@
-% !TeX root = ../holoclean.tex
+% !TeX root = tools.tex
 % !TeX encoding = UTF-8
 % !TeX spellcheck = en_US
+
+\documentclass[crop,tikz]{standalone}
+\usetikzlibrary{
+  positioning,
+  arrows
+}
+
+\makeatletter
+\@ifundefined{holoclean}{%
+  \newcommand{\holoclean}{HoloClean}%
+}{}
+\makeatother
+
+\begin{document}
 
 % Data Repairing Tools Diagram
 \begin{tikzpicture}[
@@ -45,3 +59,5 @@
   
   \end{scope}
 \end{tikzpicture}
+
+\end{document}

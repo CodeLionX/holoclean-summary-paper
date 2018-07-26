@@ -17,15 +17,16 @@
   positioning,
   fit,
   arrows,
-  arrows.meta,
   calc,
-  backgrounds,
-  shapes
+  backgrounds
 }
 
 \usepackage{csquotes} % For easy quotes \enquote
 \usepackage{glossaries} % For acronyms
 \setacronymstyle{long-short}
+
+\usepackage{standalone} % For pre-compiled pictures
+\standaloneconfig{mode=buildnew} % only build image if source file is newer
 
 % configuration of template
 \settopmatter{printacmref=false} % Removes citation information below abstract
