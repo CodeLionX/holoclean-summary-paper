@@ -157,7 +157,7 @@
     Value?(t,a,d):-Domain(t,a,d)\label{equ:cells}
   \end{equation}
   Those random variables are part of the factors that encode repairing constraints in the final factor graph.
-  During the generation of the factor graph, large domains of those random variables can lead to a combinatorial explosion.
+  During the generation of the factor graph, large domains of those random variables can lead to a combinatorial explosion~\cite{pgm}.
   Instead of assigning the whole domain of the corresponding attribute in the original dataset, \holoclean{} prunes the domain of the random variables in the relation \ddrule{Domain}.
   It only considers those values of a cell for relation \ddrule{Domain}, that exist in the cell's domain and co-occur with other values of the cell's tuple with a probability greater than a threshold $\tau$.
 
