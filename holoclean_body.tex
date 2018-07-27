@@ -158,6 +158,7 @@
   \end{equation}
   Those random variables are part of the factors that encode repairing constraints in the final factor graph.
   During the generation of the factor graph, large domains of those random variables can lead to a combinatorial explosion~\cite{pgm}.
+  %TODO differnce between evidence and query variables
   Instead of assigning the whole domain of the corresponding attribute in the original dataset, \holoclean{} prunes the domain of the random variables in the relation \ddrule{Domain}.
   It only considers those values of a cell for relation \ddrule{Domain}, that exist in the cell's domain and co-occur with other values of the cell's tuple with a probability greater than a threshold $\tau$.
 
@@ -205,11 +206,36 @@
   This allows for example to track the provenance of cell values and prioritize data sources differently.
   \holoclean{} parametrizes the weight annotation for the feature inference rule by the value of the cell $d$ and the feature vector $f$ to allow different confidence levels for the combinations of the values of $d$ and $f$.
   Those weights are not set during the generation of the rules itself and can be learned later on.
-  
+    
+  \subsubsection*{External information}
+  Based on external dictionaries and matching dependencies \holoclean{} calculates all matches of the noisy dataset's cells and the values found in the dictionaries for the cells.
+  This matches are stored in a new relation \ddrule{Matched(t,a,v,k)}, where $k$ denotes the dictionary which provided the value.
+  For each dictionary $k$ and all cells (identified by $t.a$) the relation \ddrule{Matched(t,a,v,k)} looks up the suggested dictionary value.
+  This relation is used to create the following inference rule for the external information:
+  \begin{equation}
+    Value(t,a,d):-Matched(t,a,d,k)\ weight=w(k)\label{equ:matching}
+  \end{equation}
+  Each dictionary can be trusted more or less and therefore the weight for this rules is parameterized by the dictionary identifier $k$.
+  The weights can be learned later on.
+
   \subsubsection*{Integrity constraints}
-  The second input signal are \glspl{ic}.
-  For each denial constraint \holoclean{} generates a new inference rule containing the involved cell's random variables in the head of the rule and the predicate constraints in the body.
-  The quantifier of denial constraints ($\forall t_1, t_2$) is converted to a self-join of relation \ddrule{Tuple}.
+  \begin{itemize}
+    \item The second input signal are \glspl{ic}.
+    \item they connect cells and therefore also random variables
+    \item In a later step \holoclean{} uses Gibbs sampling~\cite{gibbssampling} to perform inference.
+    \item It iterates over the random variables of the factor graphs and while keeping all other variables fixed samples a single one from its conditional distribution.
+    \item This process is computationally expensive.
+    \item But if there are only independent random variables in the factor graph Gibbs sampling requires only $O(n \log n)$ steps to converge.
+    \item All inference rules we already introduced do not cause any dependencies between random variables, because there is only one variable in the head of those rules.
+    \item That is the reason \holoclean{} does not encode \glspl{ic} with multiple random variables in the head of the inference rules.
+    \item Under the two following assumptions it can approximate the inference rules for \glspl{ic}:
+      \begin{enumerate}
+        \item more correct cells than erroneous ones, already used for minimality prior
+        \item each violation of an \gls{ic} can be fixed by changing one of the involved cells
+      \end{enumerate}
+    \item For each denial constraint \holoclean{} generates multiple inference rules containing one of the involved cell's random variables in the head of the rule and the predicate constraints and the other cell's value mappings in the body.
+    \item The quantifier of denial constraints ($\forall t_1, t_2$) is converted to a self-join of relation \ddrule{Tuple}.
+  \end{itemize}
   
   Lets consider the following denial constraint only containing two predicates that represents the functional dependency $t.A \to t.B$ as an example:
   \begin{equation}
@@ -239,17 +265,6 @@
   \holoclean{} relaxes those \textit{hard constraints} to \textit{soft constraints} by setting $w$ to a constant value.
   This allows \holoclean{} to perform more efficient probabilistic inference.
   
-  \subsubsection*{External information}
-  Based on external dictionaries and matching dependencies \holoclean{} calculates all matches of the noisy dataset's cells and the values found in the dictionaries for the cells.
-  This matches are stored in a new relation \ddrule{Matched(t,a,v,k)}, where $k$ denotes the dictionary which provided the value.
-  For each dictionary $k$ and all cells (identified by $t.a$) the relation \ddrule{Matched(t,a,v,k)} looks up the suggested dictionary value.
-  This relation is used to create the following inference rule for the external information:
-  \begin{equation}
-    Value(t,a,d):-Matched(t,a,d,k)\ weight=w(k)\label{equ:matching}
-  \end{equation}
-  Each dictionary can be trusted more or less and therefore the weight for this rules is parameterized by the dictionary identifier $k$.
-  The weights can be learned later on.
-  
   \bigskip
   After all relations and inference rules were generated, the \ddlog{} program is passed to \deepdive{} to create the factor graph.
   This step will generate all random variables for the cells and the factors between them.
@@ -261,7 +276,7 @@
   Random variables in the factor graph that correspond to the clean cell set $D_c$ are used as labeled examples.
   
   After fixing all weights \holoclean{} now has to infer the correct values for the dirty cells in set $D_d$.
-  Therefore \holoclean{} computes the distribution of all values a random variable can be assigned to.
+  Therefore, \holoclean{} computes the distribution of all values a random variable can be assigned to.
   For all random variables corresponding to the cells in $D_d$ the marginal probabilities for all possible values are obtained via Bayes inference over the joint distribution.
   As this is a very computational expensive task an approximate approach is used: Gibbs sampling~\cite{gibbssampling}.
   It is a sampling technique to estimate the full posterior probability distributions for all random variables corresponding to the noisy cells.
