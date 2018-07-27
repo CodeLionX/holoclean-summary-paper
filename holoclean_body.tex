@@ -98,7 +98,7 @@
   $d$ corresponds to the value of cell $t.a$.
   The body of the rule consists of three parts:
   A number of other relations over the used variables (here only one: $Relation(t,a,d)$),
-  conditions using the same operators, such as denial constraints enclosed in brackets, and
+  conditions using the same operators, such as denial constraints, enclosed in brackets, and
   a weight annotation ($weight=\text{w}$).
   Grounding of those rules will generate the nodes and factors of the factor graph in \deepdive{}.
   
@@ -127,8 +127,8 @@
  
   \subsection{Error detection}
   As a first step \holoclean{} has to separate clean cells from potentially dirty cells of the dataset $D$.
-  \holoclean{} treats this error detection step as a black box and the user can specify and use any method to separate dirty and clean cells of each other.
-  The framework already provides exemplary algorithms that use denial constraints, outlier detection, or external labeled data.
+  \holoclean{} treats this error detection step as a black box and the user can specify and use any method to separate dirty and clean cells from each other.
+  The framework already provides exemplary algorithms that use denial constraints, outlier detection, or external labeled data for the separation of the cells.
   It is possible to use several detection algorithms at once.
   In this case the final set of dirty cells $D_d$ is the union of all sets of dirty cells and the final set of clean cells $D_c$ is the set $D_c = D \setminus D_d$.
 
@@ -136,7 +136,7 @@
   \holoclean{} generates a probabilistic program written in \ddlog{}, which is executed using \deepdive{}.
   This program describes a graphical probabilistic model over all cells of the input database and the input signals.
   
-  Each cell in the dataset $D$ is assigned to a random variable, which can take values of a finite domain representing the domain of the cell's attribute.
+  Each cell in the dataset $D$ is assigned to a random variable, which can take values of a finite domain.
   The random variables are linked via repairing constraints, which are derived from the various input signals.
   They express the uncertainty over the values of noisy cells.
   \holoclean{} uses a factor graph to represent this probabilistic model and perform computations on it.
@@ -156,7 +156,20 @@
   \begin{equation}
     Value?(t,a,d):-Domain(t,a,d)\label{equ:cells}
   \end{equation}
-  Afterwards the \ddlog{} relations are used to form inference rules over the random variables:
+  Those random variables are part of the factors that encode repairing constraints in the final factor graph.
+  During the generation of the factor graph, large domains of those random variables can lead to a combinatorial explosion.
+  Instead of assigning the whole domain of the corresponding attribute in the original dataset, \holoclean{} prunes the domain of the random variables in the relation \ddrule{Domain}.
+  It only considers those values of a cell for relation \ddrule{Domain}, that exist in the cell's domain and co-occur with other values of the cell's tuple with a probability greater than a threshold $\tau$.
+
+  This means for each cell $t.A \in D$ \holoclean{} creates a new value-set $Y_{t.A}$ only containing those values $v \in dom(A)$ with a co-occurrence probability higher than the threshold $P(v|v') \geq \tau$.
+  The co-occurrence probability for a value $v$ of cell $t.A$ is computed based on $v$ and the value of all other cells in $t.A$'s tuple $v' \in \{\forall a \in D\setminus\{A\}: v_{t.a}\}$:
+  \begin{equation}
+    P(v|v') = \frac{\#(v_i,v')\,\text{appear together in}\, D}{\#v'\,\text{appears in}\, D}~\cite{holoclean}
+  \end{equation}
+  The threshold $\tau$ allows a trade-off between the quality of repairs and the runtime of \holoclean{} for big datasets.
+  It controls the size of the random variable's domain and therefore the size of the grounded factor graph.
+
+  After definition of the random variables, the \ddlog{} relations are used to form inference rules over the random variables:
   
   \begin{table}
     \caption{Generated \ddlog{} Relations in \holoclean{}. Obtained from~\cite{holoclean}}
@@ -167,7 +180,7 @@
       \midrule
       1 & \ddrule{Tuple(t)} & Relation of all tuple identifiers.\\
       2 & \ddrule{InitValue(t,a,v)} & Maps a cell $t.a$ to its initial value $v$ in the input dataset.\\
-      3 & \ddrule{Domain(t,a,d)} & Maps a cell $t.a$ to its domain $d \in dom(t.a)$.\\
+      3 & \ddrule{Domain(t,a,d)} & Maps a cell $t.a$ to its finite domain $d \in Y_{t.a}$.\\
       4 & \ddrule{HasFeature(t,a,f)} & Maps a cell $t.a$ to a feature vector $f$.\\
       5 & \ddrule{ExtDict(t\textsubscript{k},a\textsubscript{k},v,k)} & Maps a dictionary cell $t_k.a_k$ to its value $v$ in the dictionary $k$.\\
       \bottomrule
