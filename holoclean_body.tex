@@ -219,51 +219,53 @@
   The weights can be learned later on.
 
   \subsubsection*{Integrity constraints}
-  \begin{itemize}
-    \item The second input signal are \glspl{ic}.
-    \item they connect cells and therefore also random variables
-    \item In a later step \holoclean{} uses Gibbs sampling~\cite{gibbssampling} to perform inference.
-    \item It iterates over the random variables of the factor graphs and while keeping all other variables fixed samples a single one from its conditional distribution.
-    \item This process is computationally expensive.
-    \item But if there are only independent random variables in the factor graph Gibbs sampling requires only $O(n \log n)$ steps to converge.
-    \item All inference rules we already introduced do not cause any dependencies between random variables, because there is only one variable in the head of those rules.
-    \item That is the reason \holoclean{} does not encode \glspl{ic} with multiple random variables in the head of the inference rules.
-    \item Under the two following assumptions it can approximate the inference rules for \glspl{ic}:
-      \begin{enumerate}
-        \item more correct cells than erroneous ones, already used for minimality prior
-        \item each violation of an \gls{ic} can be fixed by changing one of the involved cells
-      \end{enumerate}
-    \item For each denial constraint \holoclean{} generates multiple inference rules containing one of the involved cell's random variables in the head of the rule and the predicate constraints and the other cell's value mappings in the body.
-    \item The quantifier of denial constraints ($\forall t_1, t_2$) is converted to a self-join of relation \ddrule{Tuple}.
-  \end{itemize}
+  The second input signal are \glspl{ic}.
+  They enforce constraints between the values of cells and therefore would connect multiple random variables with a factor in the factor graph.
+  
+  In a later step \holoclean{} uses Gibbs sampling~\cite{gibbssampling} to perform inference on the factor graph.
+  This process iterates over all random variables of the factor graph and samples a value for a single variable from its conditional distribution, while keeping all other variables fixed.
+  This approximate inference process is still computationally expensive.
+  However, if there are only independent random variables in the factor graph Gibbs sampling requires only $O(n \log n)$ iterations to converge.
+  
+  Up until now, all introduces inference rules do not cause any dependencies between random variables, because they only contain one variable in their head expression.
+  To avoid dependent random variables and utilize the guaranteed runtime of Gibbs sampling, \holoclean{} does not encode \glspl{ic} with multiple random variables in the head of the inference rules as one would expect.
+  For each denial constraint \holoclean{} generates multiple inference rules containing one of the involved cell's random variables in the head of the rule and the predicate constraints and the other cell's value mappings in the body.
+  Under the following two assumptions this approximated approach can be used:
+  \begin{enumerate}
+    \item There must exist more clean cells in the dataset than erroneous ones. This assumption represents the already introduced minimality prior.
+    \item Each violation of an \gls{ic} should be repairable by changing just one of the involved cells.
+  \end{enumerate}
   
   Lets consider the following denial constraint only containing two predicates that represents the functional dependency $t.A \to t.B$ as an example:
   \begin{equation}
     \forall t_1, t_2 \in D: \neg(t_1.A = t_2.A \land t_1.B \neq t_2.B)
   \end{equation}
-  Each instance of this constraint involves four cells ($t_1.A$, $t_1.B$, $t_2.A$ and $t_2.B$).
-  The conjunction of the corresponding random variables form the head of the \ddlog{} rule as shown in equation~\ref{equ:ic}:
-  \begin{multline}
-    !
-    \begin{pmatrix}
-      Value?(t_1,A,v_1) \land\\
-      Value?(t_2,A,v_2) \land\\
-      Value?(t_1,B,u_1) \land\\
-      Value?(t_2,B,u_2)
-    \end{pmatrix}
-    :- Tuple(t_1),Tuple(t_2)\\
-    [v_1 = v_2, u_1 \neq u_2]\ weight=w\label{equ:ic}
-  \end{multline}
-  The body of the rule then maps the cells to the corresponding tuples via relation \ddrule{Tuple}.
-  The conditions of the predicates work on the values of the cells ($v_1$, $v_2$, $u_1$, and $u_2$).
-  This template can then be applied to all combination of tuples in $D$.
+  Each instance of this constraint involves four cells ($t_1.A$, $t_1.B$, $t_2.A$ and $t_2.B$) of two tuples ($t_1$ and $t_2$).
+  The quantifier of denial constraints ($\forall t_1, t_2$) is converted to a self-join of relation \ddrule{Tuple}.
+  This means, we only have to consider the cells of one tuple to be in the head of the rules:
+  \begin{align}
+    \begin{split}
+      !Value?&(t_1,A,v_1):-\\
+      &InitValue(t_2,A,v_2), InitValue(t_1,B,u_1),\\
+      &InitValue(t_2,B,u_2), Tuple(t_1), Tuple(t_2)\\
+      &[t_1 \neq t_2, v_1 = v_2, u_1 \neq u_2]\ weight=w%\label{equ:relaxedIC1}
+    \end{split}\\
+    \begin{split}
+      !Value?&(t_1,B,u_1):-\\
+      &InitValue(t_2,B,u_2), InitValue(t_1,A,v_1),\\
+      &InitValue(t_2,A,v_2), Tuple(t_1), Tuple(t_2)\\
+      &[t_1 \neq t_2, v_1 = v_2, u_1 \neq u_2]\ weight=w%\label{equ:relaxedIC1}
+    \end{split}
+  \end{align}
+  The body of the rules then includes all other involved cells via relation \ddrule{InitValue}.
+  This relation maps the cells to their initial value and encode the first assumption in \ddlog.
+  Additionally, relation \ddrule{Tuple} is used to map the cells to their corresponding tuples and implement the self-join.
+  The conditions of the predicates in the \gls{ic} are applied on the cell's values ($v_1$, $v_2$, $u_1$, and $u_2$) and are enhanced with an additional condition preventing the join of a tuple with itself ($t_1 \neq t_2$).
+  This template can then be applied to all the allowed combinations of tuples in $D$.
   
   The weight $w$ of each rule specifies how much emphasis is put on fulfilling it.
   Larger weights imply more emphasis on the rule.
-  In general, the semantic of a denial constraint tells us that it must not be fulfilled for a dataset to be acceptable.
-  This can be achieved by setting $w=\infty$.
-  \holoclean{} relaxes those \textit{hard constraints} to \textit{soft constraints} by setting $w$ to a constant value.
-  This allows \holoclean{} to perform more efficient probabilistic inference.
+  \holoclean{} does not set the weights of those rules to a fixed value, but rather estimates those weights during training of the model.
   
   \bigskip
   After all relations and inference rules were generated, the \ddlog{} program is passed to \deepdive{} to create the factor graph.
@@ -282,12 +284,48 @@
   It is a sampling technique to estimate the full posterior probability distributions for all random variables corresponding to the noisy cells.
   
   \holoclean{}'s goal is to output a cleaned dataset.
-  To achieve this it assigns the maximum a posteriori estimates as the values of the noisy cells.
+  The system achieves this goal by assigning the maximum a posteriori estimates as the values of the noisy cells.
   Each repair is automatically annotated with its marginal probability which represents the confidence of the system that this repair is correct~\cite{holoclean}. 
   
-  Example: If we consider a cell $c$, its domain $dom(c)=\{v_1, v_2\}$ and the inferred posterior distribution $P(c) = ( P(c = v_1), P(c = v_2) ) = ( 0.81, 0.19 )$ then \holoclean{} proposes the value $v_1$ as a repair for cell $c$ as it is the estimate with the highest marginal probability.
-  This also means that \holoclean{} is $81\%$ confident about this repair.
+  Example: If we consider a cell $c$, its domain $dom(c)=\{v_1, v_2\}$ and the inferred posterior distribution
+  \begin{equation}
+    P(c) =
+    \begin{bmatrix}
+      P(c = v_1)\\
+      P(c = v_2)
+    \end{bmatrix} = 
+    \begin{bmatrix}
+      0.81\\
+      0.19
+    \end{bmatrix}
+  \end{equation}
+  then \holoclean{} proposes the value $v_1$ as a repair for cell $c$ as it is the estimate with the highest marginal probability.
+  This means that \holoclean{} is $81\%$ confident about this repair.
+  By implication, this also means that 19 out of 100 repairs with probability $0.81$ will not be correct.
 
 \section{Performance of \holoclean{}}\label{sec:performance}
+
+  \subsection{Setup}
+  
+  \subsection{Accuracy of Repairs}
+  
+  \subsection{Runtime of \holoclean{}}
+  
+  \begin{table}
+    \caption{Runtime of \holoclean{} compared to other approaches. Obtained from~\cite{holoclean}}
+    \label{tab:runtime}
+    \resizebox{\linewidth}{!}{%
+    \begin{tabular}{l|cccc}
+      \toprule
+      \textbf{Dataset} & \textbf{\holoclean{}} & \textbf{Holistic} & \textbf{KATARA} & \textbf{SCARE}\\
+      \midrule
+      Hospital & 148.0 sec & 5.7 sec & 2.0 sec & 24.7 sec \\
+      Flights & 70.6 sec & 80.4 sec & n/a & 14.0 sec \\
+      Food & 32.8 min & 7.6 min & 1.7 min & not term. \\
+      Physicians & 6.5 hours & 2.0 hours & 15.5 min & not term. \\
+      \bottomrule
+    \end{tabular}
+  }
+  \end{table}
 
 \section{Conclusion}\label{sec:conclusion}
