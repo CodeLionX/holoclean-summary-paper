@@ -1,0 +1,60 @@
+% !TeX root = accuracy.tex
+% !TeX encoding = UTF-8
+% !TeX spellcheck = en_US
+
+\documentclass[crop,tikz]{standalone}
+
+\usepackage{pgfplots}
+
+\makeatletter
+\@ifundefined{holoclean}{%
+  \newcommand{\holoclean}{HoloClean}%
+}{}
+\makeatother
+
+\begin{document}
+
+% accuracy diagram
+\newcommand{\plotcolor}{blue}
+\begin{tikzpicture}
+  \begin{axis}[
+      ybar,
+      symbolic x coords={BEGIN,Hospital,Flights,Food,Physicians,END},
+      xtick=data,
+      bar width=6,
+      legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1},
+      ymin=0, ymax=1,
+      ylabel={Accuracy ($F1$)},
+      xmin={BEGIN},xmax={END},
+      scale only axis,
+      width=0.8\linewidth
+    ]
+    \addplot[fill=\plotcolor!80] coordinates {
+      (Hospital,0.832)
+      (Flights,0.763)
+      (Food,0.783)
+      (Physicians,0.897)
+    };
+    \addplot[fill=\plotcolor!60] coordinates {
+      (Hospital,0.435)
+      (Flights,0.0)
+      (Food,0.235)
+      (Physicians,0.512)
+    };
+    \addplot[fill=\plotcolor!40] coordinates {
+      (Hospital,0.379)
+      (Flights,0.0)
+      (Food,0.473)
+      (Physicians,0.0)
+    };
+    \addplot[fill=\plotcolor!20] coordinates {
+      (Hospital,0.593)
+      (Flights,0.104)
+      (Food,0.0)
+      (Physicians,0.0)
+    };
+    \legend{\holoclean{},Holistic,KATARA,SCARE};
+  \end{axis}
+\end{tikzpicture}
+
+\end{document}
