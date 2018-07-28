@@ -3,7 +3,7 @@
 % !TeX spellcheck = en_US
 
 \documentclass[crop,tikz]{standalone}
-
+\usetikzlibrary{calc}
 \usepackage{pgfplots}
 
 \makeatletter
@@ -15,45 +15,60 @@
 \begin{document}
 
 % accuracy diagram
-\newcommand{\plotcolor}{blue}
+\newcommand{\plotcolor}{black}
 \begin{tikzpicture}
   \begin{axis}[
       ybar,
-      symbolic x coords={BEGIN,Hospital,Flights,Food,Physicians,END},
-      xtick=data,
-      bar width=6,
+      symbolic x coords={Hospital,Flights,Food,Physicians},
+      xtick style={draw=none},
+      xtick pos=left,
+      axis x line*=bottom,
+      ytick pos=left,
+      bar width=7,
       legend style={at={(0.5,-0.2)}, anchor=north, legend columns=-1},
       ymin=0, ymax=1,
       ylabel={Accuracy ($F1$)},
-      xmin={BEGIN},xmax={END},
-      scale only axis,
-      width=0.8\linewidth
+      %scale only axis,
+      %width=0.8\linewidth
+      enlarge x limits=0.2,
+      cycle list = {\plotcolor, \plotcolor!70, \plotcolor!40, \plotcolor!10},
     ]
-    \addplot[fill=\plotcolor!80] coordinates {
+    \addplot+[fill,draw=black] coordinates {
       (Hospital,0.832)
       (Flights,0.763)
       (Food,0.783)
       (Physicians,0.897)
     };
-    \addplot[fill=\plotcolor!60] coordinates {
+    \addplot+[fill,draw=black] coordinates {
       (Hospital,0.435)
       (Flights,0.0)
       (Food,0.235)
       (Physicians,0.512)
     };
-    \addplot[fill=\plotcolor!40] coordinates {
+    \addplot+[fill,draw=black] coordinates {
       (Hospital,0.379)
       (Flights,0.0)
       (Food,0.473)
       (Physicians,0.0)
     };
-    \addplot[fill=\plotcolor!20] coordinates {
+    \addplot+[fill,draw=black] coordinates {
       (Hospital,0.593)
       (Flights,0.104)
       (Food,0.0)
       (Physicians,0.0)
     };
     \legend{\holoclean{},Holistic,KATARA,SCARE};
+    
+    \def\ymin{\pgfkeysvalueof{/pgfplots/ymin}}
+    \def\ymax{\pgfkeysvalueof{/pgfplots/ymax}}
+    \def\drawSep#1#2{%
+    \draw[black,-]
+      ($(axis cs:{#1}, \ymin)!.5!(axis cs:{#2}, \ymin)$) --
+      ($(axis cs:{#1}, \ymax)!.5!(axis cs:{#2}, \ymax)$);
+    }
+    \drawSep{Hospital}{Flights}
+    \drawSep{Flights}{Food}
+    \drawSep{Food}{Physicians}
   \end{axis}
 \end{tikzpicture}
 
