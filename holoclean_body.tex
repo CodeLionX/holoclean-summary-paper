@@ -35,7 +35,7 @@
   The final version of the tool, Trifacta Wrangler~\cite{trifacta_wrangler}, is developed commercially.
 
   All those tools~\cite{scare,potters_wheel,data_wrangler,trifacta_wrangler} use quantitative statistics of the dataset itself to repair errors in it.
-  Besides that, state-of-the-art methods also use \glspl{ic}~\cite{ajax,gdr,editing_rules,data_tamer} and external knowledge~\cite{katara}, such as dictionaries, knowledge bases, or domain expert annotations, as input signals.
+  Besides that, state-of-the-art methods also use \glspl{ic}~\cite{holistic,ajax,gdr,editing_rules,data_tamer} and external knowledge~\cite{katara}, such as dictionaries, knowledge bases, or domain expert annotations, as input signals.
   Figure~\ref{fig:tools} shows those tools aligned on their level of user interaction needed to perform data repairing and the usage of the three different input signals.
 
   \begin{figure*}
@@ -304,17 +304,67 @@
   By implication, this also means that 19 out of 100 repairs with probability $0.81$ will not be correct.
 
 \section{Performance of \holoclean{}}\label{sec:performance}
+  In this section we summarize the results of the experiments made by \citeauthor{holoclean}.
+  We will look at the accuracy of \holoclean{}'s repair suggestions and the runtime of the framework to compute these.
+  Both measures are compared to three other state-of-the-art approaches:
+  Holistic~\cite{holistic} uses denial constraints to detect and repair errors,
+  KATARA~\cite{katara} generates repairs based on external knowledge bases, and
+  SCARE~\cite{scare} considers statistics about the dataset to perform machine learning based repairing.
+  Before going deeper into the results, we review the datasets used in the evaluation.
 
-  \subsection{Setup}
-  
-  \subsection{Accuracy of Repairs}
+  \subsection{Datasets}
+  \citeauthor{holoclean} selected four datasets with different sizes and types of errors.
+  For all datasets, \holoclean{} was used to repair violations of \glspl{ic}.
+
+  \subsubsection*{Hospital}
+  This is a benchmark dataset with about five percent errors and ground truth data available for all cells.
+  It consists of 19,000 cells and nine denial constraints.
+  Biggest error type are duplicates.
+
+  \subsubsection*{Flights}
+  This dataset is also available with ground truth data and consists of 14,262 cells and four denial constraints.
+  A large proportion of the cells are erroneous, thus we can use this dataset to evaluate the robustness of \holoclean{}.
+
+  \subsubsection*{Food}
+  This food inspection dataset from the City of Chicago is created by manually filled out forms and contains a lot of non-systematic errors, such as misspelled entries or duplicates.
+  At the date of usage the dataset contained 5.78 million cells and seven denial constraints that capture the mentioned errors.
+  2,000 cells were manually labeled based on detections of Holistic, KATARA, and SCARE.
+
+  \subsubsection*{Physicians}
+  The last dataset is the Physician Compare National dataset, which contains a lot of systematic errors due to misspellings or inconsistencies.
+  This dataset contains 37.29 million cells and is the biggest one used for evaluation.
+  Nine denial constraints are used to capture the errors in the dataset.
+  The same technique than for the \textit{Food} dataset was used to obtain 2,500 labeled cells.
+
+  \subsection{Accuracy of repairs}
+  We first look at the accuracy of the suggested repairs compared to the other three approaches.
+  The accuracy is reported based on the $F_1$-score:
+  \begin{equation}
+    F_1 = 2 \cdot \frac{precision \cdot recall}{precision + recall}
+  \end{equation}
+  The results for the different datasets are presented in Figure~\ref{fig:accuracy}.
+  For \holoclean{} the following thresholds $\tau$ for pruning the domain of random variables were used:
+  Hospital $\tau = 0.5$, Flights $\tau = 0.3$, Food $\tau = 0.5$, and Physicians $\tau = 0.7$.
+  %\begin{description}
+  %  \item[Hospital] $\tau = 0.5$
+  %  \item[Flights] $\tau = 0.3$
+  %  \item[Food] $\tau = 0.5$
+  %  \item[Physicians] $\tau = 0.7$
+  %\end{description}
+  Missing values (zero bars) in the diagram mean that no repairs were performed (Holistic and KATARA) or the process did not terminate after three days (SCARE).
+  \holoclean{} outperforms the other state-of-the-art approaches in all four datasets significantly.
+  The $F_1$-score of \holoclean{} is more than $0.2$ points higher than the one of the other approaches in all cases.
+  Even on the \textit{Flights} dataset, which has the highest error concentration, \holoclean{} could reach an accuracy of $76\%$.
+  This dataset was the hardest to fix, as we can deduce on the basis that Holistic and KATARA did not repair anything and SCARE only reached an accuracy of $10\%$.
   
   \begin{figure}
     \centering
     \includestandalone{tikz/accuracy}
-    \caption{Accuracy ($F1$-score) of \holoclean{} compared to other approaches. Obtained from~\cite{holoclean}}
+    \caption{Accuracy ($F_1$-score) of \holoclean{} compared to other approaches. Obtained from~\cite{holoclean}}
     \label{fig:accuracy}
   \end{figure}
+
+  This shows that the holistic approach used by \holoclean{} performs repairs with a significantly higher accuracy compared to other state-of-the-art approaches that only use one input signal.
 
   \subsection{Runtime of \holoclean{}}
   
