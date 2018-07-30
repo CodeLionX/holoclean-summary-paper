@@ -314,7 +314,6 @@
 
   \subsection{Datasets}
   \citeauthor{holoclean} selected four datasets with different sizes and types of errors.
-  For all datasets, \holoclean{} was used to repair violations of \glspl{ic}.
 
   \subsubsection*{Hospital}
   This is a benchmark dataset with about five percent errors and ground truth data available for all cells.
@@ -356,7 +355,7 @@
   The $F_1$-score of \holoclean{} is more than $0.2$ points higher than the one of the other approaches in all cases.
   Even on the \textit{Flights} dataset, which has the highest error concentration, \holoclean{} could reach an accuracy of $76\%$.
   This dataset was the hardest to fix, as we can deduce on the basis that Holistic and KATARA did not repair anything and SCARE only reached an accuracy of $10\%$.
-  
+
   \begin{figure}
     \centering
     \includestandalone{tikz/accuracy}
@@ -367,7 +366,11 @@
   This shows that the holistic approach used by \holoclean{} performs repairs with a significantly higher accuracy compared to other state-of-the-art approaches that only use one input signal.
 
   \subsection{Runtime of \holoclean{}}
-  
+  Considering the runtime to repair datasets, \citeauthor{holoclean} measured the end-to-end wall-clock time of each repairing method, including preprocessing and repairing.
+  The results are shown in Table~\ref{tab:runtime}.
+  As already mentioned, SCARE did not terminate after a three day runtime threshold for the datasets \textit{Food} and \textit{Physicians}.
+  This is indicated with \enquote{n/t}.
+
   \begin{table}
     \caption{Runtime of \holoclean{} compared to other approaches. Obtained from~\cite{holoclean}}
     \label{tab:runtime}
@@ -378,11 +381,18 @@
       \midrule
       Hospital & 148.0 sec & 5.7 sec & 2.0 sec & 24.7 sec \\
       Flights & 70.6 sec & 80.4 sec & n/a & 14.0 sec \\
-      Food & 32.8 min & 7.6 min & 1.7 min & not term. \\
-      Physicians & 6.5 hours & 2.0 hours & 15.5 min & not term. \\
+      Food & 32.8 min & 7.6 min & 1.7 min & n/t \\
+      Physicians & 6.5 hours & 2.0 hours & 15.5 min & n/t \\
       \bottomrule
     \end{tabular}
   }
   \end{table}
+
+  For a small dataset, such as \textit{Hospital}, \holoclean{} does take significantly longer compared to all other three approaches.
+  Besides that, the runtime of \holoclean{} is in the same order of magnitude compared to Holistic.
+  KATARA is faster than those approaches as it only matches cells with an external dictionary.
+
+  Overall \holoclean{} can scale to large datasets with multiple million cells.
+  It takes longer to repair the dataset than other repairing approaches, but this overhead is justified by its accuracy improvements.
 
 \section{Conclusion}\label{sec:conclusion}
