@@ -62,10 +62,12 @@
   Based on this combined view on the data and their inconsistencies they can then use statistical learning and probabilistic inference to suggest repairs for the dataset.
   
   \subsection{Overview}
-  \begin{itemize}
-    \item following work, we explain \holoclean{} in more detail
-    \item describe chapters
-  \end{itemize}
+  In the following work, we explain the framework \holoclean{}~\cite{holoclean} developed by \citeauthor{holoclean} in more detail.
+  Section~\ref{sec:background} first introduces \glspl{ic}, factor graphs and how they are used in \deepdive{}.
+  The \holoclean{} framework is described in section~\ref{sec:framework}.
+  After explaining the general architecture, we go deeper into the three consecutive steps \holoclean{} executes to repair a dataset (sections~\ref{sec:error_detection}, \ref{sec:model_generation}, and \ref{sec:repairing}).
+  Section~\ref{sec:performance} gives an overview about the accuracy of the suggested repairs and the runtime of \holoclean{} compared to other state-of-the-art approaches.
+  The conclusion completes this work in section~\ref{sec:conclusion}.
 
 
 \section{Background}\label{sec:background}
@@ -125,14 +127,14 @@
   To compute these repairs, \holoclean{} performs three consecutive steps: \textsf{Error Detection}, \textsf{Probabilistic Model Generation}, and \textsf{Data Repairing}.
   They are described in the next sections in more detail.
  
-  \subsection{Error detection}
+  \subsection{Error detection}\label{sec:error_detection}
   As a first step \holoclean{} has to separate clean cells from potentially dirty cells of the dataset $D$.
   \holoclean{} treats this error detection step as a black box and the user can specify and use any method to separate dirty and clean cells from each other.
   The framework already provides exemplary algorithms that use denial constraints, outlier detection, or external labeled data for the separation of the cells.
   It is possible to use several detection algorithms at once.
   In this case the final set of dirty cells $D_d$ is the union of all sets of dirty cells and the final set of clean cells $D_c$ is the set $D_c = D \setminus D_d$.
 
-  \subsection{Probabilistic model generation}
+  \subsection{Probabilistic model generation}\label{sec:model_generation}
   \holoclean{} generates a probabilistic program written in \ddlog{}, which is executed using \deepdive{}.
   This program describes a graphical probabilistic model over all cells of the input database and the input signals.
   
@@ -272,7 +274,7 @@
   This step will generate all random variables for the cells and the factors between them.
   Some weights are already set by \holoclean{}, others are just represented by variables and will be learned in the next step.
   
-  \subsection{Data repairing}
+  \subsection{Data repairing}\label{sec:repairing}
   To repair the dataset $D$ \holoclean{} first has to learn all weights.
   This is done via statistical learning in \deepdive{}.
   Random variables in the factor graph that correspond to the clean cell set $D_c$ are used as labeled examples.
