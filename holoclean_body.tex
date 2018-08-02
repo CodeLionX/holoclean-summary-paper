@@ -17,12 +17,9 @@
 
   \subsection{Related work}
   Many researchers have made efforts to automate the task of error detection.
-  \begin{itemize}
-    \item \textbf{TODO:}
-    \item Most of the approaches try to detect the violation of \glspl{ic}.
-    \item duplicate detection
-    \item outlier detection
-  \end{itemize}
+  Most of the approaches try to detect the violation of \glspl{ic}, such as conditional functional dependencies~\cite{bohannon2007conditional} or denial constraints~\cite{chu2013discoveringdc}.
+  Others developed techniques to detect duplicates~\cite{koudas2006record,naumann2010introduction} or outliers~\cite{das2007detecting,hellerstein2008quantitative} in dirty datasets.
+  Those automatic detection algorithms are already advanced and were shown to achieve good results on real-world datasets~\cite{abedjan2016detecting}.
 
   Data repairing techniques can be classified according to whether and how humans are involved in the repairing process.
   On the one end there are fully automatic approaches, such as SCARE~\cite{scare}, that leverage machine learning and intelligent partition algorithms to repair a database without the need of user input.
