@@ -85,7 +85,7 @@
   %\postcode{14482}
   %\country{Germany}
 }
-\email{sebastian.schmidl@student.hpi.uni-potsdam.de}
+\email{sebastian.schmidl@student.hpi.de}
 
 %\author{Felix Naumann}
 %\affiliation{%
@@ -99,13 +99,18 @@
 
 
 \begin{abstract}
-\textbf{TODO} Abstract goes here.
+In a world, where big data and machine learning approaches take over enterprise applications, maintaining data quality has become more important than ever.
+Data repairing is one way to deal with that.
+However, most repairing tools limit themselves to only one input signal, such as quantitative statistics, Integrity Constraints, or external data, to compute repairs.
+\citeauthor{holoclean} therefore propose a new holistic framework, called \holoclean~\cite{holoclean}, that observes multiple input signals and generates a probabilistic model out of them to perform data repairing of an unclean dataset.
+It uses \deepdive{} to perform statistical learning and probabilistic inference to compute the marginal probabilities of repairs, while scaling to dataset sizes with millions of tuples.
+\citeauthor{holoclean} show that \holoclean{} achieves an average accuracy improvement of $2 \times$ against single-input state-of-the-art approaches across four different datasets.
 \end{abstract}
 
 
 
-\keywords{HoloClean, DeepDive, data cleaning, data repairing,
-holistic data repairs, probabilistic inference, factor graphs}
+\keywords{HoloClean; DeepDive; data cleaning; data repairing;
+holistic data repairs; probabilistic inference; factor graphs}
 
 
 

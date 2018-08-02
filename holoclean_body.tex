@@ -313,7 +313,7 @@
   Before going deeper into the results, we review the datasets used in the evaluation.
 
   \subsection{Datasets}
-  \citeauthor{holoclean} selected four datasets with different sizes and types of errors.
+  \citeauthor{holoclean} selected four datasets with different sizes and types of errors:
 
   \subsubsection*{Hospital}
   This is a benchmark dataset with about five percent errors and ground truth data available for all cells.
@@ -396,11 +396,20 @@
   It takes longer to repair the dataset than other repairing approaches, but this overhead is justified by its accuracy improvements.
 
 \section{Conclusion}\label{sec:conclusion}
-  \begin{itemize}
-    \item recap intro: different approaches use single input signal
-    \item \holoclean{} uses holistic approach across multiple inputs
-    \item leads to 2x better accuracy on average, compared to state-of-the-art
-    \item does take longer, but justified by improvement
-    \item limited by detection approaches used at the beginning
-    \item future research direction: use semi-supervised learning on marginal probabilities, understand when \glspl{ic} can be relaxed to independent features on random variables and when not, how to provide theoretical guarantees
-  \end{itemize}
+  This paper introduced the \holoclean{} data cleaning framework developed by~\citeauthor{holoclean}~\cite{holoclean}.
+  It is a holistic approach that considers multiple repair signals as inputs to generate a probabilistic model.
+  Cells are separated to clean and potentially erroneous ones using user-supplied error detection algorithms.
+  Those two datasets serve as labeled training data for the subsequent statistical learning of missing model weights.
+  After this step, probabilistic inference is used to compute the marginal probabilities for the repair suggestions of erroneous cells.
+  The maximum a posteriori estimates are used to repair the original dataset.
+
+  \holoclean{} can achieve $2 \times$ better accuracy than other state-of-the-art algorithms that only use a single input signal.
+  \holoclean{} takes more time to compute the results, but the accuracy improvements justify the computational overhead.
+  As \holoclean{} treats error detection as a black box, its performance greatly depends on the used error detection algorithms.
+  It only performs repairs of those cells that were marked potentially erroneous by the error detection mechanism.
+
+  \citeauthor{holoclean} point out that future research directions could be the following:
+  \holoclean{} outputs repairs with their marginal probabilities.
+  Those could be used in a semi-supervised machine learning approach to get feedback from a user.
+  This could improve \holoclean{}'s suggested repairs.
+  They also want to find out, when \glspl{ic} can be relaxed to independent features on random variables and when not, as this part had a great impact on the scalability of the system and could be used in other approaches as well.
