@@ -18,7 +18,7 @@
   \subsection{Related work}
   Many researchers have made efforts to automate the task of error detection.
   Most of the approaches try to detect the violation of \glspl{ic}, such as conditional functional dependencies~\cite{bohannon2007conditional} or denial constraints~\cite{chu2013discoveringdc}.
-  Others developed techniques to detect duplicates~\cite{koudas2006record,naumann2010introduction} or outliers~\cite{das2007detecting,hellerstein2008quantitative} in dirty datasets.
+  Other approaches developed techniques to detect duplicates~\cite{koudas2006record,naumann2010introduction} or outliers~\cite{das2007detecting,hellerstein2008quantitative} in dirty datasets.
   Those automatic detection algorithms are already advanced and were shown to achieve good results on real-world datasets~\cite{abedjan2016detecting}.
 
   Data repairing techniques can be classified according to whether and how humans are involved in the repairing process.
@@ -31,7 +31,7 @@
   This makes it an appropriate tool for the manual definition of ETL processes.
   The final version of the tool, Trifacta Wrangler~\cite{trifacta_wrangler}, is developed commercially.
 
-  All those tools~\cite{scare,potters_wheel,data_wrangler,trifacta_wrangler} use quantitative statistics of the dataset itself to repair errors in it.
+  All the mentioned repairing tools~\cite{scare,potters_wheel,data_wrangler,trifacta_wrangler} use quantitative statistics of the dataset itself to repair errors in it.
   Besides that, state-of-the-art methods also use \glspl{ic}~\cite{holistic,ajax,gdr,editing_rules,data_tamer} and external knowledge~\cite{katara}, such as dictionaries, knowledge bases, or domain expert annotations, as input signals.
   Figure~\ref{fig:tools} shows those tools aligned on their level of user interaction needed to perform data repairing and the usage of the three different input signals.
 
@@ -60,9 +60,9 @@
   
   \subsection{Overview}
   In the following work, we explain the framework \holoclean{}~\cite{holoclean} developed by \citeauthor{holoclean} in more detail.
-  Section~\ref{sec:background} first introduces \glspl{ic}, factor graphs and how they are used in \deepdive{}.
+  Section~\ref{sec:background} first introduces \glspl{ic}, factor graphs and how they are used in \deepdive{} for the purpose of data repairing.
   The \holoclean{} framework is described in section~\ref{sec:framework}.
-  After explaining the general architecture, we go deeper into the three consecutive steps \holoclean{} executes to repair a dataset (sections~\ref{sec:error_detection}, \ref{sec:model_generation}, and \ref{sec:repairing}).
+  After explaining the general architecture, we go deeper into the three consecutive steps \holoclean{} executes to repair a dataset: Error detection in section~\ref{sec:error_detection}, probabilistic model generation in section~\ref{sec:model_generation}, and data repairing in section~\ref{sec:repairing}.
   Section~\ref{sec:performance} gives an overview about the accuracy of the suggested repairs and the runtime of \holoclean{} compared to other state-of-the-art approaches.
   The conclusion completes this work in section~\ref{sec:conclusion}.
 
@@ -77,7 +77,8 @@
   It is notated as $\forall t_i, t_j \in D: \neg(P_1 \wedge \dots \wedge P_K)$.
   Over all tuples $t \in D$ of a database instance $D$ not all predicates $P_k$ are allowed to be true.
   $P_k$ are defined as $v_1 \circ v_2$ or $v_1 \circ c$ with $v_1, v_2 \in \{t_i.A, t_j.A\}$, where $A$ denotes an attribute of the dataset $D$.
-  The operator $\circ$ can be one of $\{=,<,>,\neq,\leq,\geq\}$~\cite{chu2013discoveringdc}.
+  $c$ represents a constant value that is used to build the predicates.
+  The operator $\circ$ is one of $\{=,<,>,\neq,\leq,\geq\}$~\cite{chu2013discoveringdc}.
   For readability reasons we use functional dependencies of the form $A_1 \to A_2$ to express integrity constraints in this report.
   They can easily be converted to denial constraints~\cite{fd_to_dc}.
   
@@ -97,7 +98,7 @@
   $d$ corresponds to the value of cell $t.a$.
   The body of the rule consists of three parts:
   A number of other relations over the used variables (here only one: $Relation(t,a,d)$),
-  conditions using the same operators, such as denial constraints, enclosed in brackets, and
+  conditions using the same operators as denial constraints enclosed in brackets, and
   a weight annotation ($weight=\text{w}$).
   Grounding of those rules will generate the nodes and factors of the factor graph in \deepdive{}.
   
@@ -107,7 +108,7 @@
   It takes as input a dirty dataset and repairing constraints.
   Those are \glspl{ic} in form of denial constraints and external clean data in form of matching dependencies and a dictionary.
   Matching dependency map values of the unclean dataset cells to the corresponding entries in an external clean dictionary.
-  As \holoclean{} treats error detection as a black box, the user has to specify error detection algorithms as a side-input.
+  As \holoclean{} treats error detection as a black box, the user has to specify error detection algorithms as an additional side-input.
    
   \begin{figure}
     \centering
@@ -122,10 +123,10 @@
   In a second step, \holoclean{} repairs the noisy cells by assigning it to the value suggestions with the highest probability.
   
   To compute these repairs, \holoclean{} performs three consecutive steps: \textsf{Error Detection}, \textsf{Probabilistic Model Generation}, and \textsf{Data Repairing}.
-  They are described in the next sections in more detail.
+  Those steps are described in the next sections in more detail.
  
   \subsection{Error detection}\label{sec:error_detection}
-  As a first step \holoclean{} has to separate clean cells from potentially dirty cells of the dataset $D$.
+  According to the data cleaning process, \holoclean{} separates clean cells from potentially dirty cells of the dataset $D$ as a first step.
   \holoclean{} treats this error detection step as a black box and the user can specify and use any method to separate dirty and clean cells from each other.
   The framework already provides exemplary algorithms that use denial constraints, outlier detection, or external labeled data for the separation of the cells.
   It is possible to use several detection algorithms at once.
@@ -133,10 +134,10 @@
 
   \subsection{Probabilistic model generation}\label{sec:model_generation}
   \holoclean{} generates a probabilistic program written in \ddlog{}, which is executed using \deepdive{}.
-  This program describes a graphical probabilistic model over all cells of the input database and the input signals.
+  This program describes a graphical probabilistic model over all cells of the input database and the various input signals.
   
   Each cell in the dataset $D$ is assigned to a random variable, which can take values of a finite domain.
-  The random variables are linked via repairing constraints, which are derived from the various input signals.
+  The random variables are linked via repairing constraints, which are derived from the input signals.
   They express the uncertainty over the values of noisy cells.
   \holoclean{} uses a factor graph to represent this probabilistic model and perform computations on it.
   
@@ -146,20 +147,22 @@
     \item Use those relations to form inference rules.
     \item Use \deepdive{} to ground the model, yielding the factor graph.
   \end{enumerate}
-    
+
   First \holoclean{} generates \ddlog{} relations, which encode information about the dataset $D$.
   They can be obtained by simple transformations of the original dataset and are shown in table~\ref{tab:relations}.
   Variable $t$ identifies tuples in the dataset $D$ and $a$ identifies attributes in $D$.
-  Relation 5 (\ddrule{ExtDict}) is optional and only generated if there is an external dictionary provided by the user.
+  Relation 5 (\ddrule{ExtDict}) is optional and only generated if there is an external dictionary and matching dependencies provided by the user.
+
   \holoclean{} creates a categorical random variable for each cell $t.a$ in the dataset using relation 3 (\ddrule{Domain}):
   \begin{equation}
     Value?(t,a,d):-Domain(t,a,d)\label{equ:cells}
   \end{equation}
-  Those random variables are part of the factors that encode repairing constraints in the final factor graph.
-  During the generation of the factor graph, large domains of those random variables can lead to a combinatorial explosion~\cite{pgm}.
+  Those random variables form the set of variable vertices that are connected with edges to factor vertices in the final factor graph.
+  The factor vertices, short factors, encode repairing constraint on the random variables.
+  During the generation of the factor graph, large domains of the random variables can lead to a combinatorial explosion~\cite{pgm}.
   %TODO differnce between evidence and query variables
-  Instead of assigning the whole domain of the corresponding attribute in the original dataset, \holoclean{} prunes the domain of the random variables in the relation \ddrule{Domain}.
-  It only considers those values of a cell for relation \ddrule{Domain}, that exist in the cell's domain and co-occur with other values of the cell's tuple with a probability greater than a threshold $\tau$.
+  Instead of assigning the whole domain of the corresponding attribute in the original dataset, \holoclean{} prunes the number of values a random variable can take in the relation \ddrule{Domain}.
+  It only considers those values of a cell for relation \ddrule{Domain}, that exist in the domain of the cell's attribute and co-occur with other values of the cell's tuple with a probability greater than a threshold $\tau$.
 
   This means for each cell $t.A \in D$ \holoclean{} creates a new value-set $Y_{t.A}$ only containing those values $v \in dom(A)$ with a co-occurrence probability higher than the threshold $P(v|v') \geq \tau$.
   The co-occurrence probability for a value $v$ of cell $t.A$ is computed based on $v$ and the value of all other cells in $t.A$'s tuple $v' \in \{\forall a \in D\setminus\{A\}: v_{t.a}\}$:
@@ -200,7 +203,7 @@
   \begin{multline}
     Value?(t,a,d):-\\HasFeature(t,a,f)\ weight=w(d,f)\label{equ:statistics}
   \end{multline}
-  To encode the co-occurrences of attribute values \ddrule{HasFeature} stores the values of other cells in the same tuple of a given cell in a feature vector.
+  It stores the values of other cells in the same tuple of a given cell in a feature vector to encode the co-occurrences of attribute values.
   Users can customize \holoclean{} by adding more features to the \ddrule{HasFeature} relation.
   This allows for example to track the provenance of cell values and prioritize data sources differently.
   \holoclean{} parametrizes the weight annotation for the feature inference rule by the value of the cell $d$ and the feature vector $f$ to allow different confidence levels for the combinations of the values of $d$ and $f$.
@@ -208,17 +211,17 @@
     
   \subsubsection*{External information}
   Based on external dictionaries and matching dependencies \holoclean{} calculates all matches of the noisy dataset's cells and the values found in the dictionaries for the cells.
-  This matches are stored in a new relation \ddrule{Matched(t,a,v,k)}, where $k$ denotes the dictionary which provided the value.
+  These matches are stored in a new relation \ddrule{Matched(t,a,v,k)}, where $k$ denotes the dictionary which provided the value.
   For each dictionary $k$ and all cells (identified by $t.a$) the relation \ddrule{Matched(t,a,v,k)} looks up the suggested dictionary value.
   This relation is used to create the following inference rule for the external information:
   \begin{equation}
     Value(t,a,d):-Matched(t,a,d,k)\ weight=w(k)\label{equ:matching}
   \end{equation}
-  Each dictionary can be trusted more or less and therefore the weight for this rules is parameterized by the dictionary identifier $k$.
+  Each dictionary can be trusted more or less and therefore the weights for these rules are parameterized by the dictionary identifier $k$.
   The weights can be learned later on.
 
   \subsubsection*{Integrity constraints}
-  The second input signal are \glspl{ic}.
+  The third input signal are \glspl{ic}.
   They enforce constraints between the values of cells and therefore would connect multiple random variables with a factor in the factor graph.
   
   In a later step \holoclean{} uses Gibbs sampling~\cite{gibbssampling} to perform inference on the factor graph.
@@ -257,7 +260,7 @@
     \end{split}
   \end{align}
   The body of the rules then includes all other involved cells via relation \ddrule{InitValue}.
-  This relation maps the cells to their initial value and encode the first assumption in \ddlog.
+  This relation maps the cells to their initial value and encodes the first assumption in \ddlog.
   Additionally, relation \ddrule{Tuple} is used to map the cells to their corresponding tuples and implement the self-join.
   The conditions of the predicates in the \gls{ic} are applied on the cell's values ($v_1$, $v_2$, $u_1$, and $u_2$) and are enhanced with an additional condition preventing the join of a tuple with itself ($t_1 \neq t_2$).
   This template can then be applied to all the allowed combinations of tuples in $D$.
@@ -272,21 +275,21 @@
   Some weights are already set by \holoclean{}, others are just represented by variables and will be learned in the next step.
   
   \subsection{Data repairing}\label{sec:repairing}
-  To repair the dataset $D$ \holoclean{} first has to learn all weights.
+  To repair the dataset $D$ \holoclean{} first has to learn all unset weights in the factor graph.
   This is done via statistical learning in \deepdive{}.
-  Random variables in the factor graph that correspond to the clean cell set $D_c$ are used as labeled examples.
+  Random variables in the factor graph that correspond to the clean cells in set $D_c$ are used as labeled examples.
   
-  After fixing all weights \holoclean{} now has to infer the correct values for the dirty cells in set $D_d$.
-  Therefore, \holoclean{} computes the distribution of all values a random variable can be assigned to.
-  For all random variables corresponding to the cells in $D_d$ the marginal probabilities for all possible values are obtained via Bayes inference over the joint distribution.
+  After fixing all weights \holoclean{} has to infer the correct values for the dirty cells in set $D_d$.
+  Therefore, \holoclean{} computes the distribution of all values the random variables can be assigned to.
+  For all random variables corresponding to the cells in $D_d$ the marginal probabilities for all possible value assignments are obtained via Bayes inference over the joint distribution.
   As this is a very computational expensive task an approximate approach is used: Gibbs sampling~\cite{gibbssampling}.
-  It is a sampling technique to estimate the full posterior probability distributions for all random variables corresponding to the noisy cells.
+  It is a sampling technique that estimate the full posterior probability distributions for all random variables corresponding to the noisy cells.
   
   \holoclean{}'s goal is to output a cleaned dataset.
   The system achieves this goal by assigning the maximum a posteriori estimates as the values of the noisy cells.
   Each repair is automatically annotated with its marginal probability which represents the confidence of the system that this repair is correct~\cite{holoclean}. 
   
-  Example: If we consider a cell $c$, its domain $dom(c)=\{v_1, v_2\}$ and the inferred posterior distribution
+  Example: If we consider a cell $c$, its domain $Y_c=\{v_1, v_2\}$ and the inferred posterior distribution
   \begin{equation}
     P(c) =
     \begin{bmatrix}
@@ -303,7 +306,7 @@
   By implication, this also means that 19 out of 100 repairs with probability $0.81$ will not be correct.
 
 \section{Performance of \holoclean{}}\label{sec:performance}
-  In this section we summarize the results of the experiments made by \citeauthor{holoclean}.
+  In this section we summarize the results of the experiments made by \citeauthor{holoclean}
   We will look at the accuracy of \holoclean{}'s repair suggestions and the runtime of the framework to compute these.
   Both measures are compared to three other state-of-the-art approaches:
   Holistic~\cite{holistic} uses denial constraints to detect and repair errors,
@@ -312,12 +315,12 @@
   Before going deeper into the results, we review the datasets used in the evaluation.
 
   \subsection{Datasets}
-  \citeauthor{holoclean} selected four datasets with different sizes and types of errors:
+  \citeauthor{holoclean} selected four datasets with different sizes and types of errors for their experiments:
 
   \subsubsection*{Hospital}
   This is a benchmark dataset with about five percent errors and ground truth data available for all cells.
   It consists of 19,000 cells and nine denial constraints.
-  Biggest error type are duplicates.
+  Most frequent error type are duplicates.
 
   \subsubsection*{Flights}
   This dataset is also available with ground truth data and consists of 14,262 cells and four denial constraints.
@@ -330,7 +333,7 @@
 
   \subsubsection*{Physicians}
   The last dataset is the Physician Compare National dataset, which contains a lot of systematic errors due to misspellings or inconsistencies.
-  This dataset contains 37.29 million cells and is the biggest one used for evaluation.
+  This dataset contains 37.29 million cells and is the biggest one used in the experiments.
   Nine denial constraints are used to capture the errors in the dataset.
   The same technique than for the \textit{Food} dataset was used to obtain 2,500 labeled cells.
 
@@ -350,9 +353,10 @@
   %  \item[Physicians] $\tau = 0.7$
   %\end{description}
   Missing values (zero bars) in the diagram mean that no repairs were performed (Holistic and KATARA) or the process did not terminate after three days (SCARE).
+
   \holoclean{} outperforms the other state-of-the-art approaches in all four datasets significantly.
   The $F_1$-score of \holoclean{} is more than $0.2$ points higher than the one of the other approaches in all cases.
-  Even on the \textit{Flights} dataset, which has the highest error concentration, \holoclean{} could reach an accuracy of $76\%$.
+  Even on the \textit{Flights} dataset, which has the highest error concentration, \holoclean{} reached an accuracy of $76\%$.
   This dataset was the hardest to fix, as we can deduce on the basis that Holistic and KATARA did not repair anything and SCARE only reached an accuracy of $10\%$.
 
   \begin{figure}
@@ -411,4 +415,4 @@
   \holoclean{} outputs repairs with their marginal probabilities.
   Those could be used in a semi-supervised machine learning approach to get feedback from a user.
   This could improve \holoclean{}'s suggested repairs.
-  They also want to find out, when \glspl{ic} can be relaxed to independent features on random variables and when not, as this part had a great impact on the scalability of the system and could be used in other approaches as well.
+  They also want to find out, when \glspl{ic} can be relaxed to independent features on random variables and when not, as this part has a great impact on the scalability of the system and can be used in other approaches as well.
