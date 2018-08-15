@@ -212,9 +212,7 @@
   \subsubsection*{External information}
   Based on external dictionaries and matching dependencies \holoclean{} calculates all matches of the noisy dataset's cells and the values found in the dictionaries for the cells.
   These matches are stored in a new relation \ddrule{Matched(t,a,v,k)}, where $k$ denotes the dictionaries, which provided the corresponding values $v$.
-  For each dictionary $k$ and all cells (identified by $t.a$) the relation \ddrule{Matched%
-  %}\hfill\ddrule{
-  (t,a,v,k)} looks up the suggested dictionary value.
+  For each dictionary $k$ and all cells (identified by $t.a$) the relation \ddrule{Matched(t,a,v,k)} looks up the suggested dictionary value.
   This relation is used to create the following inference rule for the external information:
   \begin{equation}
     Value(t,a,d):-Matched(t,a,d,k)\ weight=w(k)\label{equ:matching}
