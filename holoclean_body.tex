@@ -201,7 +201,7 @@
   \subsubsection*{Quantitative statistics}
   Relation \ddrule{HasFeature} is used to capture quantitative statistics of the input dataset:
   \begin{multline}
-    Value?(t,a,d):-\\HasFeature(t,a,f)\ weight=w(d,f)\label{equ:statistics}
+    Value?(t,a,d):-\ HasFeature(t,a,f)\ weight=w(d,f)\label{equ:statistics}
   \end{multline}
   It stores the values of other cells in the same tuple of a given cell in a feature vector to encode the co-occurrences of attribute values.
   Users can customize \holoclean{} by adding more features to the \ddrule{HasFeature} relation.
