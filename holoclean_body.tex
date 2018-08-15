@@ -48,15 +48,15 @@
   \subsection{Introducing \holoclean{}}
   Most of the tools limit themselves to only one signal to perform data repairing, ignoring other information sources.
   Each type of signal is associated with a different action on the dataset and has its own downsides.
-  Data repairs that use \glspl{ic} could introduce incorrect repairs, because they are relying on the \textit{minimality principle} and assume that most of the data values are clean.
-  This is not necessarily the case and minimal repairs not always correspond to correct repairs~\cite{holoclean}.
+  Data repairs that use \glspl{ic} could introduce incorrect repairs, because they assume that most of the data values are clean (\textit{minimality principle}).
+  This is not necessarily the case and minimal repairs do not always correspond to correct repairs~\cite{holoclean}.
   Repair algorithms relying on external information are dependent on the coverage of the external data source and can therefore perform poorly.
   Quantitative statistics heavily depend on the available information in the dataset itself.
   For small datasets and unfortunate situations this can drastically decrease repairing quality.
   
   \citeauthor{holoclean} therefore propose a holistic data repairing approach that includes all aforementioned signals into one framework: \holoclean{}~\cite{holoclean}.
   To tackle the problem that different signals could suggest conflicting repairs they convert all signals into features of a probabilistic model.
-  Based on this combined view on the data and their inconsistencies they can then use statistical learning and probabilistic inference to suggest repairs for the dataset.
+  Based on this combined view on the data and its inconsistencies they can then use statistical learning and probabilistic inference to suggest repairs for the dataset.
   
   \subsection{Overview}
   In the following work, we explain the framework \holoclean{}~\cite{holoclean} developed by \citeauthor{holoclean} in more detail.
@@ -97,7 +97,7 @@
   \holoclean{} uses $t$ to identify a tuple and $a$ to identify an attribute.
   $d$ corresponds to the value of cell $t.a$.
   The body of the rule consists of three parts:
-  A number of other relations over the used variables (here only one: $Relation(t,a,d)$),
+  A number of other relations over the used variables (in the example, there is only one: $Relation(t,a,d)$),
   conditions using the same operators as denial constraints enclosed in brackets, and
   a weight annotation ($weight=\text{w}$).
   Grounding of those rules will generate the nodes and factors of the factor graph in \deepdive{}.
@@ -107,7 +107,7 @@
   Figure~\ref{fig:architecture} shows an overview over the framework's architecture.
   It takes as input a dirty dataset and repairing constraints.
   Those are \glspl{ic} in form of denial constraints and external clean data in form of matching dependencies and a dictionary.
-  Matching dependency map values of the unclean dataset cells to the corresponding entries in an external clean dictionary.
+  Matching dependencies map values of the unclean dataset cells to the corresponding entries in an external clean dictionary.
   As \holoclean{} treats error detection as a black box, the user has to specify error detection algorithms as an additional side-input.
    
   \begin{figure}
@@ -127,7 +127,7 @@
  
   \subsection{Error detection}\label{sec:error_detection}
   According to the data cleaning process, \holoclean{} separates clean cells from potentially dirty cells of the dataset $D$ as a first step.
-  \holoclean{} treats this error detection step as a black box and the user can specify and use any method to separate dirty and clean cells from each other.
+  As \holoclean{} treats this error detection step as a black box, the user can specify and use any method to separate dirty and clean cells from each other.
   The framework already provides exemplary algorithms that use denial constraints, outlier detection, or external labeled data for the separation of the cells.
   It is possible to use several detection algorithms at once.
   In this case the final set of dirty cells $D_d$ is the union of all sets of dirty cells and the final set of clean cells $D_c$ is the set $D_c = D \setminus D_d$.
@@ -211,8 +211,10 @@
     
   \subsubsection*{External information}
   Based on external dictionaries and matching dependencies \holoclean{} calculates all matches of the noisy dataset's cells and the values found in the dictionaries for the cells.
-  These matches are stored in a new relation \ddrule{Matched(t,a,v,k)}, where $k$ denotes the dictionary which provided the value.
-  For each dictionary $k$ and all cells (identified by $t.a$) the relation \ddrule{Matched(t,a,v,k)} looks up the suggested dictionary value.
+  These matches are stored in a new relation \ddrule{Matched(t,a,v,k)}, where $k$ denotes the dictionaries, which provided the corresponding values $v$.
+  For each dictionary $k$ and all cells (identified by $t.a$) the relation \ddrule{Matched%
+  %}\hfill\ddrule{
+  (t,a,v,k)} looks up the suggested dictionary value.
   This relation is used to create the following inference rule for the external information:
   \begin{equation}
     Value(t,a,d):-Matched(t,a,d,k)\ weight=w(k)\label{equ:matching}
@@ -227,9 +229,9 @@
   In a later step \holoclean{} uses Gibbs sampling~\cite{gibbssampling} to perform inference on the factor graph.
   This process iterates over all random variables of the factor graph and samples a value for a single variable from its conditional distribution, while keeping all other variables fixed.
   This approximate inference process is still computationally expensive.
-  However, if there are only independent random variables in the factor graph Gibbs sampling requires only $O(n \log n)$ iterations to converge.
+  However, if there are only independent random variables in the factor graph, Gibbs sampling requires only $O(n \log n)$ iterations to converge.
   
-  Up until now, all introduces inference rules do not cause any dependencies between random variables, because they only contain one variable in their head expression.
+  Up until now, all introduced inference rules do not cause any dependencies between random variables, because they only contain one variable in their head expression.
   To avoid dependent random variables and utilize the guaranteed runtime of Gibbs sampling, \holoclean{} does not encode \glspl{ic} with multiple random variables in the head of the inference rules as one would expect.
   For each denial constraint \holoclean{} generates multiple inference rules containing one of the involved cell's random variables in the head of the rule and the predicate constraints and the other cell's value mappings in the body.
   Under the following two assumptions this approximated approach can be used:
@@ -282,7 +284,7 @@
   After fixing all weights \holoclean{} has to infer the correct values for the dirty cells in set $D_d$.
   Therefore, \holoclean{} computes the distribution of all values the random variables can be assigned to.
   For all random variables corresponding to the cells in $D_d$ the marginal probabilities for all possible value assignments are obtained via Bayes inference over the joint distribution.
-  As this is a very computational expensive task an approximate approach is used: Gibbs sampling~\cite{gibbssampling}.
+  As this is a very computationally expensive task an approximate approach is used: Gibbs sampling~\cite{gibbssampling}.
   It is a sampling technique that estimate the full posterior probability distributions for all random variables corresponding to the noisy cells.
   
   \holoclean{}'s goal is to output a cleaned dataset.
@@ -320,7 +322,7 @@
   \subsubsection*{Hospital}
   This is a benchmark dataset with about five percent errors and ground truth data available for all cells.
   It consists of 19,000 cells and nine denial constraints.
-  Most frequent error type are duplicates.
+  The most frequent errors in this dataset are duplicates.
 
   \subsubsection*{Flights}
   This dataset is also available with ground truth data and consists of 14,262 cells and four denial constraints.
@@ -335,7 +337,7 @@
   The last dataset is the Physician Compare National dataset, which contains a lot of systematic errors due to misspellings or inconsistencies.
   This dataset contains 37.29 million cells and is the biggest one used in the experiments.
   Nine denial constraints are used to capture the errors in the dataset.
-  The same technique than for the \textit{Food} dataset was used to obtain 2,500 labeled cells.
+  The same technique as for the \textit{Food} dataset was used to obtain 2,500 labeled cells.
 
   \subsection{Accuracy of repairs}
   We first look at the accuracy of the suggested repairs compared to the other three approaches.
@@ -395,13 +397,13 @@
   Besides that, the runtime of \holoclean{} is in the same order of magnitude compared to Holistic.
   KATARA is faster than those approaches as it only matches cells with an external dictionary.
 
-  Overall \holoclean{} can scale to large datasets with multiple million cells.
+  Overall \holoclean{} can scale to large datasets with several million cells.
   It takes longer to repair the dataset than other repairing approaches, but this overhead is justified by its accuracy improvements.
 
 \section{Conclusion}\label{sec:conclusion}
   This paper introduced the \holoclean{} data cleaning framework developed by~\citeauthor{holoclean}~\cite{holoclean}.
   It is a holistic approach that considers multiple repair signals as inputs to generate a probabilistic model.
-  Cells are separated to clean and potentially erroneous ones using user-supplied error detection algorithms.
+  Cells are separated into clean and potentially erroneous ones using user-supplied error detection algorithms.
   Those two datasets serve as labeled training data for the subsequent statistical learning of missing model weights.
   After this step, probabilistic inference is used to compute the marginal probabilities for the repair suggestions of erroneous cells.
   The maximum a posteriori estimates are used to repair the original dataset.
