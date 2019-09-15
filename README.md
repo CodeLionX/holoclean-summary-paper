@@ -1,4 +1,4 @@
-# How to Repair Data? The HoloClean Framework
+# How to Repair Data? The HoloClean Framework (unpublished paper)
 
 Report about the HoloClean Framework ([Github-repository](https://github.com/HoloClean/holoclean)) written for the Seminar _Horrible Data_ at HPI.
 The paper, on which this work is based on ([1]), can be found [online](http://www.vldb.org/pvldb/vol10/p1190-rekatsinas.pdf).
